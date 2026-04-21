@@ -76,8 +76,6 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body { overflow-x: hidden; }
-
 body {
   background: var(--bg);
   color: var(--white);
@@ -256,7 +254,7 @@ nav {
   z-index: 40;
 }
 
-.topbar-left { min-width: 0; }
+.topbar-left { min-width: 160px; }
 
 .page-title {
   font-family: var(--font-title);
@@ -264,8 +262,6 @@ nav {
   font-weight: 700;
   color: var(--white);
 }
-
-@media (min-width: 769px) { .topbar-left { min-width: 160px; } }
 
 .topbar-center {
   flex: 1;
@@ -647,8 +643,7 @@ nav {
 
 .cat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
 
-.cat-icon { font-size: 1.6rem; margin-bottom: 8px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; margin-left: auto; margin-right: auto; }
-.cat-icon img { width: 64px !important; height: 64px !important; object-fit: contain; display: block; }
+.cat-icon { font-size: 1.6rem; margin-bottom: 8px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; }
 .cat-nome { font-size: 0.75rem; color: var(--gray); margin-bottom: 6px; }
 .cat-valor { font-family: var(--font-title); font-weight: 700; font-size: 0.95rem; color: var(--red); }
 
@@ -957,8 +952,7 @@ select option { background: var(--surface-2); }
   box-shadow: 0 8px 24px rgba(34,197,94,0.1);
 }
 
-.artigo-emoji { font-size: 1.8rem; margin-bottom: 12px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
-.artigo-emoji img { width: 64px !important; height: 64px !important; object-fit: contain; }
+.artigo-emoji { font-size: 1.8rem; margin-bottom: 12px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; }
 
 .artigo-card h3 {
   font-family: var(--font-title);
@@ -1141,9 +1135,7 @@ select option { background: var(--surface-2); }
   .topbar-desktop-title { display: none !important; }
 
   /* Barra de busca: esconde no mobile — usa overlay com ícone de lupa */
-  @media (min-width: 769px) { .topbar-left { min-width: 160px; } }
-
-.topbar-center {
+  .topbar-center {
     display: none !important;
   }
 
@@ -1259,10 +1251,10 @@ select option { background: var(--surface-2); }
 
   /* Botões: ícone + texto curto no mobile */
   .topbar-btn {
-    padding: 0 10px;
+    padding: 0 8px;
     height: 36px;
     width: auto;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     border-radius: 10px;
     flex-shrink: 0;
     gap: 4px;
@@ -1275,8 +1267,6 @@ select option { background: var(--surface-2); }
     gap: 5px;
     display: flex;
     align-items: center;
-    overflow: hidden;
-    max-width: fit-content;
   }
   .topbar-left { max-width: 130px !important; }
   .topbar-logo-mobile { max-width: 130px !important; }
@@ -1306,8 +1296,8 @@ select option { background: var(--surface-2); }
   /* Artigos: 1 coluna */
   .artigos-grid { grid-template-columns: 1fr; }
 
-  /* Tabela de movimentações: scroll horizontal interno */
-  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+  /* Tabela de movimentações: scroll horizontal */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .mov-table { min-width: 460px; }
   .mov-table th, .mov-table td { padding: 10px 10px; font-size: 0.8rem; }
 
@@ -1367,32 +1357,6 @@ select option { background: var(--surface-2); }
 /* ==============================
    HAMBURGER BUTTON
    ============================== */
-.topbar-avatar-mobile {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  max-width: 38px;
-  border-radius: 50%;
-  background: var(--primary);
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden !important;
-  border: 2.5px solid rgba(255,255,255,0.25);
-  transition: border-color 0.2s, transform 0.15s;
-  padding: 0;
-  box-sizing: border-box;
-}
-.topbar-avatar-mobile:hover {
-  border-color: rgba(255,255,255,0.6);
-  transform: scale(1.05);
-}
 .hamburger-btn {
   display: none;
   flex-direction: column;
@@ -1863,403 +1827,3 @@ input[type="date"]:focus { border-color: rgba(57,255,121,0.5); }
   border-color: var(--primary-glow);
   color: var(--primary);
 }
-
-
-/* ==============================
-   FIX OVERFLOW HORIZONTAL MOBILE
-   ============================== */
-@media (max-width: 768px) {
-  html, body {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-  }
-  .main-wrapper {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-    width: 100vw !important;
-  }
-  .main {
-    overflow-x: hidden !important;
-    max-width: 100% !important;
-  }
-  .topbar {
-    overflow: hidden !important;
-    max-width: 100vw !important;
-    width: 100% !important;
-  }
-  /* Garante que nenhum elemento filho quebre o layout */
-  .kpi-row, .content-grid, .two-col, .categorias-grid {
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-}
-
-
-/* ==============================
-   FIX MOBILE - OVERFLOW + TOPBAR
-   ============================== */
-
-/* Bloqueia scroll lateral em toda a página */
-html, body {
-  overflow-x: hidden !important;
-  max-width: 100% !important;
-}
-
-@media (max-width: 768px) {
-
-  /* Topbar: layout fixo sem overflow */
-  .topbar {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    overflow: hidden !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    padding: 0 10px !important;
-    gap: 6px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Esquerda: hamburger + avatar centralizados */
-  .topbar-left {
-    flex-shrink: 0 !important;
-    max-width: none !important;
-    width: auto !important;
-  }
-
-  .topbar-logo-mobile {
-    display: flex !important;
-    align-items: center !important;
-    gap: 0 !important;
-    max-width: none !important;
-    overflow: visible !important;
-    justify-content: space-between !important;
-  }
-
-  /* Esconde o texto Dashboard/nome no topbar - economiza espaço */
-  .topbar-mobile-user {
-    display: none !important;
-  }
-
-  /* Avatar mobile - garante dimensões fixas */
-  .topbar-avatar-mobile {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    max-width: 38px !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    background-size: cover !important;
-    background-position: center center !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Logo visível */
-  .topbar-logo-mobile img {
-    display: block !important;
-    height: 24px !important;
-    width: auto !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Direita: botões compactos */
-  .topbar-right {
-    display: flex !important;
-    align-items: center !important;
-    gap: 5px !important;
-    flex-shrink: 0 !important;
-    margin-left: auto !important;
-    overflow: hidden !important;
-  }
-
-  /* Botões Nova entrada / Novo gasto - compactos */
-  .topbar-btn {
-    padding: 0 8px !important;
-    height: 34px !important;
-    font-size: 0.7rem !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    border-radius: 10px !important;
-    gap: 3px !important;
-  }
-
-  .topbar-btn svg {
-    width: 13px !important;
-    height: 13px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Sino */
-  .notif-btn {
-    width: 34px !important;
-    height: 34px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Lupa mobile */
-  .search-mobile-btn {
-    width: 34px !important;
-    height: 34px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Hamburguer */
-  .hamburger-btn {
-    flex-shrink: 0 !important;
-  }
-
-  /* Conteúdo principal sem overflow lateral */
-  .main-wrapper,
-  .main,
-  .kpi-row,
-  .content-grid,
-  .chart-card,
-  .recent-card {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Canvas do gráfico */
-  canvas {
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-
-  /* Drawer não vaza */
-  .drawer {
-    overflow-x: hidden !important;
-  }
-}
-
-/* ==============================
-   NOVOS MÓDULOS v17
-   ============================== */
-
-/* Abas do perfil */
-.perfil-tab {
-  flex: 1;
-  background: none;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 6px;
-  font-size: .78rem;
-  font-weight: 600;
-  font-family: inherit;
-  color: var(--gray);
-  cursor: pointer;
-  transition: all .2s;
-  white-space: nowrap;
-}
-.perfil-tab.active {
-  background: var(--card-bg, #1a1f2e);
-  color: var(--white);
-  box-shadow: 0 1px 4px rgba(0,0,0,.3);
-}
-
-/* Opções de vida (perfil) */
-.vida-opt {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 10px 6px;
-  background: rgba(255,255,255,0.03);
-  border: 1.5px solid var(--border, rgba(255,255,255,0.08));
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: .78rem;
-  font-weight: 500;
-  color: var(--gray);
-  text-align: center;
-  transition: all .2s;
-  line-height: 1.2;
-}
-.vida-opt:hover { border-color: rgba(0,200,83,0.3); color: var(--white); }
-.vida-opt.selected {
-  border-color: var(--primary, #00c853);
-  background: rgba(0,200,83,0.1);
-  color: var(--primary, #00c853);
-}
-.vida-opt span { font-size: 1.2rem; }
-
-/* KPIs de Dívidas */
-#dividas-kpis .kpi-card { cursor: default; }
-
-/* Cards de dívidas cadastradas */
-.divida-item {
-  background: var(--card-bg, #161b27);
-  border: 1px solid var(--border, rgba(255,255,255,0.07));
-  border-radius: 14px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.divida-item:last-child { margin-bottom: 0; }
-.divida-item-icon { font-size: 1.4rem; flex-shrink: 0; }
-.divida-item-info { flex: 1; min-width: 0; }
-.divida-item-nome {
-  font-size: .88rem;
-  font-weight: 600;
-  color: var(--white);
-  margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.divida-item-sub { font-size: .75rem; color: var(--gray); }
-.divida-item-valor {
-  font-size: .95rem;
-  font-weight: 700;
-  color: #ef4444;
-  flex-shrink: 0;
-}
-.divida-item-actions {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-.divida-btn-del {
-  background: rgba(239,68,68,0.1);
-  border: 1px solid rgba(239,68,68,0.2);
-  color: #ef4444;
-  border-radius: 8px;
-  padding: 5px 8px;
-  font-size: .75rem;
-  cursor: pointer;
-  transition: all .2s;
-}
-.divida-btn-del:hover { background: rgba(239,68,68,0.2); }
-
-/* Estratégia de quitação */
-#estrategia-card { animation: fadeUp .3s ease; }
-@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-
-/* Progress bar de dívida */
-.divida-progress {
-  height: 4px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 4px;
-  margin-top: 6px;
-  overflow: hidden;
-}
-.divida-progress-fill {
-  height: 100%;
-  border-radius: 4px;
-  background: linear-gradient(90deg, #ef4444, #f59e0b);
-  transition: width .4s ease;
-}
-
-/* Badge de tipo de dívida */
-.divida-badge {
-  display: inline-block;
-  font-size: .65rem;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 20px;
-  margin-left: 6px;
-  vertical-align: middle;
-}
-.badge-cartao { background: rgba(245,158,11,0.15); color: #f59e0b; }
-.badge-emprestimo { background: rgba(139,92,246,0.15); color: #8b5cf6; }
-.badge-financiamento { background: rgba(59,130,246,0.15); color: #3b82f6; }
-.badge-terceiros { background: rgba(6,182,212,0.15); color: #06b6d4; }
-.badge-outros { background: rgba(100,116,139,0.15); color: #94a3b8; }
-
-
-/* ==============================
-   MÓDULO 2 — GASTOS ADAPTATIVOS
-   ============================== */
-
-/* Cat card com barra de meta */
-.cat-card { position: relative; overflow: hidden; }
-.cat-meta-bar {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 3px;
-  background: rgba(255,255,255,0.06);
-}
-.cat-meta-fill {
-  height: 100%;
-  border-radius: 0 0 3px 3px;
-  background: var(--primary, #00c853);
-  transition: width .5s ease;
-}
-.cat-meta-fill.warn { background: #f59e0b; }
-.cat-meta-fill.danger { background: #ef4444; }
-.cat-meta-label {
-  font-size: .64rem;
-  color: var(--gray);
-  margin-top: 3px;
-  line-height: 1;
-}
-.cat-meta-label.warn { color: #f59e0b; }
-.cat-meta-label.danger { color: #ef4444; }
-
-/* Sugestão de orçamento 50-30-20 */
-.orcamento-sugestao {
-  background: var(--card-bg, #161b27);
-  border: 1px solid var(--border, rgba(255,255,255,0.07));
-  border-radius: 14px;
-  padding: 16px 18px;
-}
-.orcamento-sugestao-titulo {
-  font-size: .82rem;
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.orcamento-sugestao-titulo span { font-size: 1rem; }
-.orcamento-regras {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-.orcamento-regra {
-  background: rgba(255,255,255,0.03);
-  border-radius: 10px;
-  padding: 10px 10px 8px;
-  text-align: center;
-}
-.orcamento-regra-pct {
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin-bottom: 2px;
-}
-.orcamento-regra-label {
-  font-size: .68rem;
-  color: var(--gray);
-  line-height: 1.3;
-}
-.orcamento-regra-val {
-  font-size: .78rem;
-  font-weight: 600;
-  margin-top: 4px;
-}
-.or-verde { color: #22c55e; }
-.or-azul { color: #3b82f6; }
-.or-amarelo { color: #f59e0b; }
-
-/* Cat novo (categoria adicionada pelo perfil) — brilho sutil */
-.cat-card.cat-novo {
-  border-color: rgba(0,200,83,0.25);
-}
-.cat-card.cat-novo::after {
-  content: 'novo';
-  position: absolute;
-  top: 8px; right: 8px;
-  font-size: .55rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  color: var(--primary);
-  background: rgba(0,200,83,0.12);
-  padding: 2px 5px;
-  border-radius: 4px;
-}
-

@@ -481,7 +481,6 @@
   <div class="left-panel">
     <a href="landing.html" class="left-logo">
       <img src="logo.png" alt="Monvy" style="height:32px;width:auto;display:block;">
-      Monvy
     </a>
 
     <div class="left-content">
@@ -490,19 +489,19 @@
 
       <div class="features-list">
         <div class="feat-item">
-          <div class="feat-icon">📊</div>
+          <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
           <span>Dashboard completo com saldo e fluxo financeiro</span>
         </div>
         <div class="feat-item">
-          <div class="feat-icon">🎯</div>
+          <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
           <span>Metas de economia com barra de progresso visual</span>
         </div>
         <div class="feat-item">
-          <div class="feat-icon">📈</div>
+          <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
           <span>Simulador de investimentos e comparação de rendimentos</span>
         </div>
         <div class="feat-item">
-          <div class="feat-icon">🤔</div>
+          <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
           <span>Pergunta "necessidade ou desejo?" antes de cada gasto</span>
         </div>
       </div>
@@ -544,7 +543,7 @@
 
       <!-- LOGIN -->
       <div id="form-login">
-        <div class="auth-title">Bem-vindo de volta 👋</div>
+        <div class="auth-title">Bem-vindo de volta</div>
         <div class="auth-sub">Entre na sua conta para continuar</div>
 
         <div class="form-group">
@@ -557,6 +556,9 @@
           <label class="form-label">Senha</label>
           <input type="password" class="form-input" id="login-senha" placeholder="••••••••">
           <div class="error-msg" id="err-login-senha">Senha incorreta</div>
+          <div style="text-align:right;margin-top:6px">
+            <a href="#" onclick="mudarAba('esqueci')" style="font-size:.78rem;color:var(--primary);text-decoration:none;font-weight:600">Esqueci minha senha</a>
+          </div>
         </div>
 
         <div class="divider">ou</div>
@@ -575,9 +577,33 @@
         </p>
       </div>
 
+      <!-- ESQUECI A SENHA -->
+      <div id="form-esqueci" style="display:none">
+        <div class="auth-title">Recuperar senha</div>
+        <div class="auth-sub">Digite seu e-mail cadastrado e mostraremos como acessar sua conta</div>
+
+        <div class="form-group" style="margin-top:24px">
+          <label class="form-label">E-mail cadastrado</label>
+          <input type="email" class="form-input" id="esqueci-email" placeholder="seu@email.com">
+          <div class="error-msg" id="err-esqueci-email">E-mail não encontrado</div>
+        </div>
+
+        <div id="esqueci-resultado" style="display:none;margin:16px 0;padding:16px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:12px">
+          <div style="font-size:.82rem;color:var(--gray);margin-bottom:6px">Conta encontrada! Sua senha é:</div>
+          <div id="esqueci-senha-reveal" style="font-size:1.1rem;font-weight:700;color:var(--primary);letter-spacing:2px;font-family:monospace"></div>
+          <div style="font-size:.75rem;color:var(--gray);margin-top:8px;opacity:.7">Anote sua senha e faça login normalmente.</div>
+        </div>
+
+        <button class="btn-submit" onclick="recuperarSenha()" style="margin-top:4px">Recuperar senha</button>
+
+        <p style="text-align:center;font-size:.8rem;color:var(--gray);margin-top:16px">
+          Lembrou? <a href="#" onclick="mudarAba('login')" style="color:var(--primary);text-decoration:none">Voltar ao login →</a>
+        </p>
+      </div>
+
       <!-- CADASTRO -->
       <div id="form-cadastro">
-        <div class="auth-title">Criar conta grátis ✨</div>
+        <div class="auth-title">Criar conta grátis</div>
         <div class="auth-sub">Em 30 segundos você está dentro</div>
 
         <div class="form-group">
@@ -616,7 +642,7 @@
 
   <!-- Toast -->
   <div class="toast" id="toast">
-    <span class="toast-icon" id="toast-icon">✅</span>
+    <span class="toast-icon" id="toast-icon"></span>
     <span id="toast-msg">Tudo certo!</span>
   </div>
 
@@ -636,10 +662,39 @@
       document.getElementById('tab-cadastro').classList.toggle('active', aba === 'cadastro');
       document.getElementById('form-login').style.display = aba === 'login' ? 'block' : 'none';
       document.getElementById('form-cadastro').style.display = aba === 'cadastro' ? 'block' : 'none';
+      document.getElementById('form-esqueci').style.display = aba === 'esqueci' ? 'block' : 'none';
+      // Esconde tabs quando na tela de recuperação
+      document.querySelector('.auth-tabs').style.display = aba === 'esqueci' ? 'none' : 'flex';
+      // Limpar resultado ao abrir
+      if (aba === 'esqueci') {
+        const res = document.getElementById('esqueci-resultado');
+        if (res) res.style.display = 'none';
+        const emailEl = document.getElementById('esqueci-email');
+        if (emailEl) emailEl.value = '';
+        erro('err-esqueci-email', false);
+      }
+    }
+
+    // ── Recuperar senha ──
+    function recuperarSenha() {
+      const email = document.getElementById('esqueci-email').value.trim();
+      if (!email || !email.includes('@')) { erro('err-esqueci-email', true); document.getElementById('err-esqueci-email').textContent = 'Digite um e-mail válido'; return; }
+      erro('err-esqueci-email', false);
+      const raw = localStorage.getItem('monvy_usuarios');
+      const usuarios = raw ? JSON.parse(raw) : [];
+      const user = usuarios.find(u => u.email === email);
+      if (!user) {
+        erro('err-esqueci-email', true);
+        document.getElementById('err-esqueci-email').textContent = 'E-mail não encontrado';
+        document.getElementById('esqueci-resultado').style.display = 'none';
+        return;
+      }
+      document.getElementById('esqueci-senha-reveal').textContent = user.senha;
+      document.getElementById('esqueci-resultado').style.display = 'block';
     }
 
     // ── Toast ──
-    function showToast(msg, icon = '✅') {
+    function showToast(msg, icon = '') {
       const t = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = msg;
       document.getElementById('toast-icon').textContent = icon;
@@ -686,12 +741,12 @@
       if (!user) {
         erro('err-login-senha', true);
         document.getElementById('err-login-senha').textContent = 'E-mail ou senha incorretos';
-        showToast('Credenciais inválidas', '❌');
+        showToast('Credenciais inválidas');
         return;
       }
 
       localStorage.setItem('monvy_logado', JSON.stringify(user));
-      showToast(`Bem-vindo de volta, ${user.nome}! 👋`);
+      showToast(`Bem-vindo de volta, ${user.nome}!`);
       setTimeout(() => window.location.href = 'index.html', 1200);
     }
 
@@ -712,7 +767,7 @@
       if (senha.length < 6) { erro('err-cad-senha', true); valido = false; }
       else erro('err-cad-senha', false);
 
-      if (!termos) { showToast('Aceite os Termos de Uso para continuar', '⚠️'); valido = false; }
+      if (!termos) { showToast('Aceite os Termos de Uso para continuar'); valido = false; }
 
       if (!valido) return;
 
@@ -721,7 +776,7 @@
       if (usuarios.find(u => u.email === email)) {
         erro('err-cad-email', true);
         document.getElementById('err-cad-email').textContent = 'Este e-mail já está cadastrado';
-        showToast('E-mail já cadastrado', '⚠️');
+        showToast('E-mail já cadastrado');
         return;
       }
 
@@ -730,7 +785,7 @@
       localStorage.setItem('monvy_users', JSON.stringify(usuarios));
       localStorage.setItem('monvy_logado', JSON.stringify(novoUser));
 
-      showToast(`Conta criada! Bem-vindo ao Monvy, ${nome}! 🎉`);
+      showToast(`Conta criada! Bem-vindo ao Monvy, ${nome}!`);
       setTimeout(() => window.location.href = 'index.html', 1400);
     }
 
@@ -738,7 +793,7 @@
     function entrarDemo() {
       const demoUser = { nome: 'Visitante', email: 'demo@monvy.com', senha: '', demo: true };
       localStorage.setItem('monvy_logado', JSON.stringify(demoUser));
-      showToast('Entrando no modo demo... 🚀');
+      showToast('Entrando no modo demo...');
       setTimeout(() => window.location.href = 'index.html', 1000);
     }
 

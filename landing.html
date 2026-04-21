@@ -147,9 +147,9 @@
       border: 1px solid rgba(255,255,255,0.1);
       backdrop-filter: blur(20px);
     }
-    .fc1 { background: rgba(255,255,255,0.05); width: 240px; top: 0; left: 50%; margin-left: -120px; z-index: 3; animation: floatA 6s ease-in-out infinite; }
-    .fc2 { background: linear-gradient(135deg,rgba(34,197,94,0.18),rgba(163,230,53,0.08)); border-color: rgba(34,197,94,0.3); width: 220px; top: 30px; left: 50%; margin-left: -300px; z-index: 2; animation: floatB 6s ease-in-out infinite; }
-    .fc3 { background: rgba(255,255,255,0.04); width: 200px; top: 50px; left: 50%; margin-left: 100px; z-index: 1; animation: floatC 6s ease-in-out infinite; }
+    .fc1 { background: rgba(255,255,255,0.05); width: 220px; top: 0; left: 50%; margin-left: -110px; z-index: 3; animation: floatA 6s ease-in-out infinite; }
+    .fc2 { background: linear-gradient(135deg,rgba(34,197,94,0.18),rgba(163,230,53,0.08)); border-color: rgba(34,197,94,0.3); width: 220px; top: 30px; left: 50%; margin-left: -290px; z-index: 2; animation: floatB 6s ease-in-out infinite; }
+    .fc3 { background: rgba(255,255,255,0.04); width: 220px; top: 50px; left: 50%; margin-left: 80px; z-index: 1; animation: floatC 6s ease-in-out infinite; }
     @keyframes floatA { 0%,100%{transform:rotate(-3deg) translateY(0)} 50%{transform:rotate(-3deg) translateY(-12px)} }
     @keyframes floatB { 0%,100%{transform:rotate(3deg) translateY(0)} 50%{transform:rotate(3deg) translateY(-14px)} }
     @keyframes floatC { 0%,100%{transform:rotate(7deg) translateY(0)} 50%{transform:rotate(7deg) translateY(-8px)} }
@@ -198,9 +198,13 @@
     .feature-card:hover { border-color: rgba(34,197,94,0.3); transform: translateY(-4px); }
     .feature-card:hover::after { opacity: 1; }
     .feature-icon {
-      width: 48px; height: 48px; border-radius: 14px;
+      width: 52px; height: 52px; border-radius: 14px;
       background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
-      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 18px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+      padding: 10px;
+    }
+    .feature-icon img {
+      width: 100%; height: 100%; object-fit: contain;
     }
     .feature-title { font-family: var(--font-h); font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
     .feature-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
@@ -482,12 +486,12 @@
   <p class="section-sub">Seis módulos pensados para quem quer organizar a vida financeira sem complicação.</p>
 
   <div class="features-grid">
-    <div class="feature-card"><div class="feature-icon">🏠</div><div class="feature-title">Dashboard completo</div><div class="feature-desc">Saldo em destaque, entradas, saídas e últimas movimentações numa tela só. Visão geral imediata.</div></div>
-    <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Gastos por categoria</div><div class="feature-desc">Organize seus gastos em Casa, Alimentação, Transporte, Lazer, Saúde e Outros. Com gráfico de fluxo.</div></div>
-    <div class="feature-card"><div class="feature-icon">🎯</div><div class="feature-title">Metas de economia</div><div class="feature-desc">Crie metas com valor-alvo e acompanhe com barra de progresso. Adicione valores quando quiser.</div></div>
-    <div class="feature-card"><div class="feature-icon">💳</div><div class="feature-title">Simulador de dívidas</div><div class="feature-desc">Descubra o valor real que você vai pagar com juros antes de assumir qualquer dívida.</div></div>
-    <div class="feature-card"><div class="feature-icon">📈</div><div class="feature-title">Comparador de investimentos</div><div class="feature-desc">Poupança, Tesouro Selic e CDB 110% lado a lado. Simule com seu valor e prazo.</div></div>
-    <div class="feature-card"><div class="feature-icon">🧠</div><div class="feature-title">Necessidade vs Desejo</div><div class="feature-desc">Ao registrar um gasto o Monvy te pergunta: isso é necessidade ou impulso? E pede confirmação se for desejo.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-casa.png" alt="Dashboard"></div><div class="feature-title">Dashboard completo</div><div class="feature-desc">Saldo em destaque, entradas, saídas e últimas movimentações numa tela só. Visão geral imediata.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-grafico.png" alt="Gastos"></div><div class="feature-title">Gastos por categoria</div><div class="feature-desc">Organize seus gastos em Casa, Alimentação, Transporte, Lazer, Saúde e Outros. Com gráfico de fluxo.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-meta.png" alt="Metas"></div><div class="feature-title">Metas de economia</div><div class="feature-desc">Crie metas com valor-alvo e acompanhe com barra de progresso. Adicione valores quando quiser.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-cartao.png" alt="Dívidas"></div><div class="feature-title">Simulador de dívidas</div><div class="feature-desc">Descubra o valor real que você vai pagar com juros antes de assumir qualquer dívida.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-investimento.png" alt="Investimentos"></div><div class="feature-title">Comparador de investimentos</div><div class="feature-desc">Poupança, Tesouro Selic e CDB 110% lado a lado. Simule com seu valor e prazo.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-cerebro.png" alt="Necessidade vs Desejo"></div><div class="feature-title">Necessidade vs Desejo</div><div class="feature-desc">Ao registrar um gasto o Monvy te pergunta: isso é necessidade ou impulso? E pede confirmação se for desejo.</div></div>
   </div>
 </section>
 

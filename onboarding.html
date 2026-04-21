@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monvy — Vamos te conhecer</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg, #0d1117);
+      color: var(--white, #f1f5f9);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .ob-wrap {
+      width: 100%;
+      max-width: 560px;
+    }
+    .ob-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+    .ob-logo img { height: 40px; }
+    .ob-card {
+      background: var(--card-bg, #161b27);
+      border: 1px solid var(--border, rgba(255,255,255,0.08));
+      border-radius: 20px;
+      padding: 36px 32px;
+    }
+    .ob-step-indicator {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 28px;
+      justify-content: center;
+    }
+    .ob-step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border, rgba(255,255,255,0.1));
+      transition: all .3s;
+    }
+    .ob-step-dot.active {
+      background: var(--primary, #00c853);
+      width: 24px;
+      border-radius: 4px;
+    }
+    .ob-step-dot.done { background: rgba(0,200,83,0.4); }
+    .ob-step { display: none; }
+    .ob-step.active { display: block; animation: fadeUp .35s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .ob-step-label {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--primary, #00c853);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+    .ob-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--white, #f1f5f9);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .ob-subtitle {
+      font-size: .9rem;
+      color: var(--gray, #64748b);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .ob-options {
+      display: grid;
+      gap: 10px;
+    }
+    .ob-options.cols-2 { grid-template-columns: 1fr 1fr; }
+    .ob-options.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .ob-opt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--border, rgba(255,255,255,0.08));
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all .2s;
+      user-select: none;
+      text-align: center;
+    }
+    .ob-opt:hover { border-color: rgba(0,200,83,0.4); background: rgba(0,200,83,0.04); }
+    .ob-opt.selected { border-color: var(--primary, #00c853); background: rgba(0,200,83,0.1); }
+    .ob-opt-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .ob-opt-icon img {
+      width: 48px; height: 48px; object-fit: contain;
+    }
+    .ob-opt-label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--white, #f1f5f9);
+    }
+    .ob-opt-sub {
+      font-size: .72rem;
+      color: var(--gray, #64748b);
+      line-height: 1.3;
+    }
+    .ob-opt.selected .ob-opt-label { color: var(--primary, #00c853); }
+    .ob-opt .ob-check {
+      display: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--primary, #00c853);
+      color: #000;
+      font-size: .7rem;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 8px; right: 8px;
+    }
+    .ob-opt { position: relative; }
+    .ob-opt.selected .ob-check { display: flex; }
+    /* Dívidas step */
+    .ob-divida-form { display: flex; flex-direction: column; gap: 10px; }
+    .ob-divida-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border, rgba(255,255,255,0.08));
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .ob-divida-row .ob-opt-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .ob-divida-row-info { flex: 1; }
+    .ob-divida-row-label { font-size: .82rem; font-weight: 600; color: var(--white, #f1f5f9); margin-bottom: 4px; }
+    .ob-divida-row input {
+      width: 100%;
+      background: var(--input-bg, rgba(255,255,255,0.06));
+      border: 1px solid var(--border, rgba(255,255,255,0.08));
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: var(--white, #f1f5f9);
+      font-size: .85rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .ob-divida-row input:focus { border-color: var(--primary, #00c853); }
+    .ob-divida-toggle {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border, rgba(255,255,255,0.1));
+      background: transparent;
+      color: var(--gray, #64748b);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .ob-divida-toggle.ativo {
+      background: rgba(0,200,83,0.15);
+      border-color: var(--primary, #00c853);
+      color: var(--primary, #00c853);
+    }
+    .ob-divida-expand {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .ob-divida-expand.open { display: flex; }
+    .ob-divida-expand label {
+      font-size: .72rem;
+      color: var(--gray, #64748b);
+    }
+    .ob-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 28px;
+      gap: 12px;
+    }
+    .ob-btn-back {
+      background: none;
+      border: 1px solid var(--border, rgba(255,255,255,0.1));
+      color: var(--gray, #64748b);
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: .9rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .ob-btn-back:hover { border-color: rgba(255,255,255,0.2); color: var(--white, #f1f5f9); }
+    .ob-btn-next {
+      flex: 1;
+      background: var(--primary, #00c853);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 24px;
+      font-size: .95rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .ob-btn-next:hover { filter: brightness(1.1); }
+    .ob-btn-next:disabled { opacity: .4; cursor: not-allowed; }
+    .ob-skip {
+      text-align: center;
+      margin-top: 16px;
+      font-size: .8rem;
+      color: var(--gray, #64748b);
+    }
+    .ob-skip a {
+      color: var(--gray, #64748b);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    /* Renda step */
+    .ob-renda-input-wrap {
+      position: relative;
+    }
+    .ob-renda-input-wrap span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray, #64748b);
+      font-size: .95rem;
+    }
+    .ob-renda-input-wrap input {
+      width: 100%;
+      background: var(--input-bg, rgba(255,255,255,0.06));
+      border: 1.5px solid var(--border, rgba(255,255,255,0.08));
+      border-radius: 12px;
+      padding: 14px 14px 14px 40px;
+      color: var(--white, #f1f5f9);
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .ob-renda-input-wrap input:focus { border-color: var(--primary, #00c853); }
+    /* Sucesso */
+    .ob-success {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .ob-success-icon {
+      width: 72px; height: 72px;
+      background: rgba(0,200,83,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+    }
+    @media (max-width: 480px) {
+      .ob-card { padding: 28px 18px; }
+      .ob-options.cols-3 { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ob-wrap">
+    <div class="ob-logo">
+      <img src="logo.png" alt="Monvy">
+    </div>
+    <div class="ob-card">
+      <!-- Indicador de etapas -->
+      <div class="ob-step-indicator" id="step-indicator">
+        <div class="ob-step-dot active" id="dot-0"></div>
+        <div class="ob-step-dot" id="dot-1"></div>
+        <div class="ob-step-dot" id="dot-2"></div>
+        <div class="ob-step-dot" id="dot-3"></div>
+        <div class="ob-step-dot" id="dot-4"></div>
+      </div>
+
+      <!-- STEP 0: Moradia -->
+      <div class="ob-step active" id="step-0">
+        <div class="ob-step-label">Passo 1 de 5 · Moradia</div>
+        <div class="ob-title">Onde você mora?</div>
+        <div class="ob-subtitle">Isso ajuda a adaptar suas categorias de gastos automaticamente.</div>
+        <div class="ob-options cols-2">
+          <div class="ob-opt" onclick="selecionar(this,'moradia','aluguel')">
+            <div class="ob-opt-icon"><img src="icone-casa.png" alt=""></div>
+            <div class="ob-opt-label">Aluguel</div>
+            <div class="ob-opt-sub">Pago mensalmente</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionar(this,'moradia','propria')">
+            <div class="ob-opt-icon"><img src="icone-casa.png" alt=""></div>
+            <div class="ob-opt-label">Casa própria</div>
+            <div class="ob-opt-sub">Quitada</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionar(this,'moradia','financiada')">
+            <div class="ob-opt-icon"><img src="icone-casa.png" alt=""></div>
+            <div class="ob-opt-label">Financiada</div>
+            <div class="ob-opt-sub">Parcelas mensais</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionar(this,'moradia','outros')">
+            <div class="ob-opt-icon">🏠</div>
+            <div class="ob-opt-label">Outros</div>
+            <div class="ob-opt-sub">Com família, república...</div>
+            <div class="ob-check">✓</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Transporte -->
+      <div class="ob-step" id="step-1">
+        <div class="ob-step-label">Passo 2 de 5 · Transporte</div>
+        <div class="ob-title">Como você se locomove?</div>
+        <div class="ob-subtitle">Pode marcar mais de uma opção.</div>
+        <div class="ob-options cols-3" id="transporte-opts">
+          <div class="ob-opt" onclick="selecionarMulti(this,'transporte','carro')">
+            <div class="ob-opt-icon"><img src="icone-carro.png" alt=""></div>
+            <div class="ob-opt-label">Carro</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionarMulti(this,'transporte','moto')">
+            <div class="ob-opt-icon"><img src="icone-moto.png" alt=""></div>
+            <div class="ob-opt-label">Moto</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionarMulti(this,'transporte','publico')">
+            <div class="ob-opt-icon">🚌</div>
+            <div class="ob-opt-label">Público</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionarMulti(this,'transporte','app')">
+            <div class="ob-opt-icon">📱</div>
+            <div class="ob-opt-label">Uber/99</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionarMulti(this,'transporte','bike')">
+            <div class="ob-opt-icon">🚲</div>
+            <div class="ob-opt-label">Bicicleta</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionarMulti(this,'transporte','nenhum')">
+            <div class="ob-opt-icon">🚶</div>
+            <div class="ob-opt-label">A pé</div>
+            <div class="ob-check">✓</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Família -->
+      <div class="ob-step" id="step-2">
+        <div class="ob-step-label">Passo 3 de 5 · Família</div>
+        <div class="ob-title">Sua situação familiar</div>
+        <div class="ob-subtitle">Ajuda a sugerir categorias como educação e saúde infantil.</div>
+        <div class="ob-options cols-2" style="margin-bottom:16px">
+          <div class="ob-opt" onclick="selecionar(this,'filhos','sim')">
+            <div class="ob-opt-icon">👶</div>
+            <div class="ob-opt-label">Tenho filhos</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionar(this,'filhos','nao')">
+            <div class="ob-opt-icon">🙋</div>
+            <div class="ob-opt-label">Sem filhos</div>
+            <div class="ob-check">✓</div>
+          </div>
+        </div>
+        <div class="ob-options cols-2">
+          <div class="ob-opt" onclick="selecionarMulti(this,'familia','dependentes')">
+            <div class="ob-opt-icon">👴</div>
+            <div class="ob-opt-label">Dependentes</div>
+            <div class="ob-opt-sub">Pais, avós...</div>
+            <div class="ob-check">✓</div>
+          </div>
+          <div class="ob-opt" onclick="selecionarMulti(this,'familia','pets')">
+            <div class="ob-opt-icon">🐾</div>
+            <div class="ob-opt-label">Pets</div>
+            <div class="ob-opt-sub">Vet, ração...</div>
+            <div class="ob-check">✓</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Dívidas -->
+      <div class="ob-step" id="step-3">
+        <div class="ob-step-label">Passo 4 de 5 · Dívidas</div>
+        <div class="ob-title">Você tem dívidas ativas?</div>
+        <div class="ob-subtitle">Informe os valores aproximados. Isso é só para o Monvy te ajudar melhor.</div>
+        <div class="ob-divida-form">
+          <div class="ob-divida-row" id="div-cartao-row">
+            <div class="ob-opt-icon"><img src="icone-cartao.png" alt="" style="width:36px;height:36px;object-fit:contain"></div>
+            <div class="ob-divida-row-info">
+              <div class="ob-divida-row-label">Cartão de crédito</div>
+              <div class="ob-divida-expand" id="div-cartao-expand">
+                <label>Valor total da fatura/dívida</label>
+                <input type="number" id="div-cartao-val" placeholder="R$ 0,00" min="0">
+              </div>
+            </div>
+            <button class="ob-divida-toggle" id="btn-cartao" onclick="toggleDivida('cartao')">+</button>
+          </div>
+          <div class="ob-divida-row">
+            <div class="ob-opt-icon">💸</div>
+            <div class="ob-divida-row-info">
+              <div class="ob-divida-row-label">Empréstimo pessoal</div>
+              <div class="ob-divida-expand" id="div-emprestimo-expand">
+                <label>Saldo devedor restante</label>
+                <input type="number" id="div-emprestimo-val" placeholder="R$ 0,00" min="0">
+              </div>
+            </div>
+            <button class="ob-divida-toggle" id="btn-emprestimo" onclick="toggleDivida('emprestimo')">+</button>
+          </div>
+          <div class="ob-divida-row">
+            <div class="ob-opt-icon">🤝</div>
+            <div class="ob-divida-row-info">
+              <div class="ob-divida-row-label">Dívida com terceiros</div>
+              <div class="ob-divida-expand" id="div-terceiros-expand">
+                <label>Valor que deve a pessoas</label>
+                <input type="number" id="div-terceiros-val" placeholder="R$ 0,00" min="0">
+              </div>
+            </div>
+            <button class="ob-divida-toggle" id="btn-terceiros" onclick="toggleDivida('terceiros')">+</button>
+          </div>
+          <div class="ob-divida-row">
+            <div class="ob-opt-icon">🏦</div>
+            <div class="ob-divida-row-info">
+              <div class="ob-divida-row-label">Financiamento (carro, casa)</div>
+              <div class="ob-divida-expand" id="div-financiamento-expand">
+                <label>Saldo devedor restante</label>
+                <input type="number" id="div-financiamento-val" placeholder="R$ 0,00" min="0">
+              </div>
+            </div>
+            <button class="ob-divida-toggle" id="btn-financiamento" onclick="toggleDivida('financiamento')">+</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--gray,#64748b);text-align:center">Pode pular se não tiver dívidas.</div>
+      </div>
+
+      <!-- STEP 4: Renda -->
+      <div class="ob-step" id="step-4">
+        <div class="ob-step-label">Passo 5 de 5 · Renda</div>
+        <div class="ob-title">Qual sua renda mensal?</div>
+        <div class="ob-subtitle">Usamos isso para sugerir metas e limites por categoria. Você pode mudar depois.</div>
+        <div class="ob-renda-input-wrap" style="margin-bottom:16px">
+          <span>R$</span>
+          <input type="number" id="ob-renda" placeholder="0,00" min="0" oninput="validarRenda()">
+        </div>
+        <div class="ob-options cols-2" id="renda-rapida">
+          <div class="ob-opt" onclick="setRenda(1500)"><div class="ob-opt-label">até R$ 1.500</div></div>
+          <div class="ob-opt" onclick="setRenda(2500)"><div class="ob-opt-label">R$ 1.500–2.500</div></div>
+          <div class="ob-opt" onclick="setRenda(4000)"><div class="ob-opt-label">R$ 2.500–5.000</div></div>
+          <div class="ob-opt" onclick="setRenda(7000)"><div class="ob-opt-label">acima de R$ 5.000</div></div>
+        </div>
+      </div>
+
+      <!-- Botões de navegação -->
+      <div class="ob-footer" id="ob-footer">
+        <button class="ob-btn-back" id="ob-back" onclick="voltarStep()" style="display:none">← Voltar</button>
+        <button class="ob-btn-next" id="ob-next" onclick="avancarStep()">Continuar →</button>
+      </div>
+      <div class="ob-skip" id="ob-skip">
+        <a onclick="pularOnboarding()">Pular por enquanto</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Aplicar tema salvo
+    const tema = localStorage.getItem('monvy_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', tema);
+
+    let stepAtual = 0;
+    const totalSteps = 5;
+    const perfil = { moradia: null, transporte: [], filhos: null, familia: [], dividas: {}, renda: null };
+
+    function selecionar(el, campo, valor) {
+      const parent = el.closest('.ob-options');
+      parent.querySelectorAll('.ob-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      perfil[campo] = valor;
+    }
+
+    function selecionarMulti(el, campo, valor) {
+      el.classList.toggle('selected');
+      if (!perfil[campo]) perfil[campo] = [];
+      if (el.classList.contains('selected')) {
+        if (!perfil[campo].includes(valor)) perfil[campo].push(valor);
+      } else {
+        perfil[campo] = perfil[campo].filter(v => v !== valor);
+      }
+    }
+
+    function toggleDivida(tipo) {
+      const btn = document.getElementById('btn-' + tipo);
+      const expand = document.getElementById('div-' + tipo + '-expand');
+      const ativo = btn.classList.toggle('ativo');
+      btn.textContent = ativo ? '−' : '+';
+      if (ativo) {
+        expand.classList.add('open');
+      } else {
+        expand.classList.remove('open');
+        const input = expand.querySelector('input');
+        if (input) input.value = '';
+      }
+    }
+
+    function setRenda(val) {
+      document.getElementById('ob-renda').value = val;
+      document.querySelectorAll('#renda-rapida .ob-opt').forEach(o => o.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      perfil.renda = val;
+    }
+
+    function validarRenda() {
+      perfil.renda = parseFloat(document.getElementById('ob-renda').value) || null;
+    }
+
+    function atualizarIndicador() {
+      for (let i = 0; i < totalSteps; i++) {
+        const dot = document.getElementById('dot-' + i);
+        dot.className = 'ob-step-dot';
+        if (i === stepAtual) dot.classList.add('active');
+        else if (i < stepAtual) dot.classList.add('done');
+      }
+      document.getElementById('ob-back').style.display = stepAtual > 0 ? 'block' : 'none';
+      document.getElementById('ob-next').textContent = stepAtual === totalSteps - 1 ? 'Concluir e entrar →' : 'Continuar →';
+    }
+
+    function avancarStep() {
+      if (stepAtual === totalSteps - 1) {
+        salvarESair();
+        return;
+      }
+      document.getElementById('step-' + stepAtual).classList.remove('active');
+      stepAtual++;
+      document.getElementById('step-' + stepAtual).classList.add('active');
+      atualizarIndicador();
+    }
+
+    function voltarStep() {
+      document.getElementById('step-' + stepAtual).classList.remove('active');
+      stepAtual--;
+      document.getElementById('step-' + stepAtual).classList.add('active');
+      atualizarIndicador();
+    }
+
+    function coletarDividas() {
+      const tipos = ['cartao','emprestimo','terceiros','financiamento'];
+      tipos.forEach(t => {
+        const btn = document.getElementById('btn-' + t);
+        if (btn && btn.classList.contains('ativo')) {
+          const input = document.getElementById('div-' + t + '-val');
+          const val = parseFloat(input ? input.value : 0) || 0;
+          if (val > 0) perfil.dividas[t] = val;
+        }
+      });
+    }
+
+    function salvarESair() {
+      coletarDividas();
+      perfil.renda = parseFloat(document.getElementById('ob-renda').value) || perfil.renda;
+      localStorage.setItem('monvy_perfil_vida', JSON.stringify(perfil));
+      localStorage.setItem('monvy_onboarding_done', '1');
+      window.location.href = 'index.html';
+    }
+
+    function pularOnboarding() {
+      localStorage.setItem('monvy_onboarding_done', '1');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
