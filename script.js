@@ -1,6 +1,21 @@
 // ==============================
 // MONVY — LÓGICA COMPLETA
 // ==============================
+import {
+  onAuth, fazerLogout as fbLogout, getPerfil,
+  ouvirMovimentacoes, adicionarMovimentacao, deletarMovimentacao,
+  getMetas, adicionarMeta, atualizarMeta, deletarMeta,
+  getDividas, adicionarDivida, atualizarDivida, deletarDivida,
+  salvarPerfilVida as fbSalvarPerfilVida,
+  salvarPerfil as fbSalvarPerfil,
+  auth, db
+} from './firebase.js';
+
+// Expor auth e db para scripts inline do index.html
+window._firebaseExports = { auth, db };
+
+let currentUser = null;
+let unsubMovimentacoes = null;
 
 let saldo = 0, totalEntradas = 0, totalSaidas = 0;
 let movimentacoes = [], metas = [];
@@ -190,27 +205,74 @@ function abrirModal(tipo) {
 
 function fecharModal() { document.getElementById('modal').classList.add('hidden'); }
 
-function confirmarModal() {
+async function confirmarModal() {
   const valor = parseFloat(document.getElementById('modal-valor').value);
   if (!valor||valor<=0) { alert('Digite um valor válido!'); return; }
-  if (tipoAtual==='gasto'&&respostaPergunta==='') { document.getElementById('modal-pergunta').classList.remove('hidden'); document.getElementById('btn-confirmar').classList.add('hidden'); return; }
-  registrar(valor, document.getElementById('modal-descricao').value||(tipoAtual==='ganho'?'Entrada':'Saída'), document.getElementById('modal-categoria').value, document.getElementById('modal-data').value||hojeISO(), document.getElementById('modal-recorrente').checked);
+  if (tipoAtual==='gasto'&&respostaPergunta==='') {
+    document.getElementById('modal-pergunta').classList.remove('hidden');
+    document.getElementById('btn-confirmar').classList.add('hidden');
+    return;
+  }
+  const catEl = document.getElementById('modal-categoria');
+  const categoria = (tipoAtual === 'gasto' && catEl) ? (catEl.value || 'Outros') : '';
+  await registrar(
+    valor,
+    document.getElementById('modal-descricao').value || (tipoAtual==='ganho' ? 'Entrada' : 'Saída'),
+    categoria,
+    document.getElementById('modal-data').value || hojeISO(),
+    document.getElementById('modal-recorrente').checked
+  );
   fecharModal();
 }
 
-function responderPergunta(resposta) {
+async function responderPergunta(resposta) {
   respostaPergunta = resposta;
   const valor = parseFloat(document.getElementById('modal-valor').value);
-  if (resposta==='desejo') { if (!confirm('Isso é um desejo!\n\nVocê tem certeza que quer gastar?\n\nPense bem antes de confirmar')) { fecharModal(); return; } }
-  registrar(valor, document.getElementById('modal-descricao').value||'Saída', document.getElementById('modal-categoria').value, document.getElementById('modal-data').value||hojeISO(), document.getElementById('modal-recorrente').checked);
+  if (resposta==='desejo') {
+    if (!confirm('Isso é um desejo!\n\nVocê tem certeza que quer gastar?\n\nPense bem antes de confirmar')) {
+      fecharModal(); return;
+    }
+  }
+  const catEl = document.getElementById('modal-categoria');
+  const categoria = catEl ? (catEl.value || 'Outros') : 'Outros';
+  await registrar(
+    valor,
+    document.getElementById('modal-descricao').value || 'Saída',
+    categoria,
+    document.getElementById('modal-data').value || hojeISO(),
+    document.getElementById('modal-recorrente').checked
+  );
   fecharModal();
 }
 
-function registrar(valor, descricao, categoria, data, recorrente) {
-  movimentacoes.push({ tipo:tipoAtual, valor, descricao, categoria, data:data||hojeISO(), recorrente:!!recorrente, resposta:respostaPergunta });
-  recalcularTotais(); atualizarKPIs(); atualizarListaInicio(); atualizarChart();
+async function registrar(valor, descricao, categoria, data, recorrente) {
+  if (!currentUser) { alert('Você precisa estar logado.'); return; }
+  // Garantir que nenhum campo seja undefined (Firestore rejeita undefined)
+  const mov = {
+    tipo: tipoAtual,
+    valor: Number(valor),
+    descricao: descricao || (tipoAtual === 'ganho' ? 'Entrada' : 'Saída'),
+    categoria: categoria || '',
+    data: data || hojeISO(),
+    recorrente: !!recorrente,
+    resposta: respostaPergunta || ''
+  };
+  try {
+    await adicionarMovimentacao(currentUser.uid, mov);
+  } catch(e) {
+    console.error('Erro ao salvar movimentação:', e);
+    const msg = e && e.code === 'permission-denied'
+      ? 'Sem permissão para salvar. Verifique as regras do Firestore.'
+      : 'Erro ao salvar. Tente novamente.';
+    alert(msg);
+  }
 }
 
+function recalcular() { recalcularTotais(); atualizarKPIs(); atualizarListaInicio(); }
+
+// Aliases para compatibilidade Firebase
+function atualizarListaMetas() { renderizarMetas(); }
+function renderizarMovimentacoes() { atualizarListaInicio(); }
 function recalcularTotais() {
   saldo=0; totalEntradas=0; totalSaidas=0;
   movimentacoes.forEach(m=>{ if(m.tipo==='ganho'){saldo+=m.valor;totalEntradas+=m.valor;}else{saldo-=m.valor;totalSaidas+=m.valor;} });
@@ -230,20 +292,44 @@ function abrirModalEditar(index) {
 
 function fecharModalEditar() { document.getElementById('modal-editar').classList.add('hidden'); editandoIndex=-1; }
 
-function salvarEdicao() {
+async function salvarEdicao() {
   const valor = parseFloat(document.getElementById('edit-valor').value);
   if (!valor||valor<=0) { alert('Digite um valor válido!'); return; }
+  if (!currentUser) return;
   const m = movimentacoes[editandoIndex];
-  m.valor=valor; m.descricao=document.getElementById('edit-descricao').value||(m.tipo==='ganho'?'Entrada':'Saída');
-  m.data=document.getElementById('edit-data').value||hojeISO();
-  if (m.tipo==='gasto') m.categoria=document.getElementById('edit-categoria').value;
-  recalcularTotais(); atualizarKPIs(); atualizarListaInicio(); atualizarChart(); atualizarTelaCategorias(); fecharModalEditar();
+  if (!m || !m.id) return;
+  const catEl = document.getElementById('edit-categoria');
+  const dados = {
+    valor: Number(valor),
+    descricao: document.getElementById('edit-descricao').value || (m.tipo==='ganho' ? 'Entrada' : 'Saída'),
+    data: document.getElementById('edit-data').value || hojeISO(),
+    categoria: m.tipo==='gasto' ? (catEl ? catEl.value || 'Outros' : 'Outros') : (m.categoria || ''),
+    recorrente: !!m.recorrente,
+    resposta: m.resposta || ''
+  };
+  try {
+    await deletarMovimentacao(currentUser.uid, m.id);
+    const tipo = m.tipo;
+    tipoAtual = tipo;
+    await adicionarMovimentacao(currentUser.uid, { tipo, ...dados });
+  } catch(e) {
+    console.error('Erro ao editar:', e);
+    alert('Erro ao salvar edição. Tente novamente.');
+  }
+  fecharModalEditar();
 }
 
-function excluirMovimentacao() {
+async function excluirMovimentacao() {
   if (!confirm('Excluir esta movimentação?')) return;
-  movimentacoes.splice(editandoIndex,1);
-  recalcularTotais(); atualizarKPIs(); atualizarListaInicio(); atualizarChart(); atualizarTelaCategorias(); fecharModalEditar();
+  if (!currentUser) return;
+  const mov = movimentacoes[editandoIndex];
+  if (mov && mov.id) {
+    try {
+      await deletarMovimentacao(currentUser.uid, mov.id);
+      // onSnapshot atualiza automaticamente
+    } catch(e) { console.error('Erro ao excluir:', e); }
+  }
+  fecharModalEditar();
 }
 
 // GASTOS
@@ -252,12 +338,16 @@ function atualizarTelaCategorias_v16_legado() {
 }
 
 // METAS
-function criarMeta() {
+async function criarMeta() {
   const nome=document.getElementById('meta-nome').value.trim(), valor=parseFloat(document.getElementById('meta-valor').value);
   if (!nome||!valor||valor<=0) { alert('Preencha nome e valor!'); return; }
-  metas.push({nome,objetivo:valor,atual:0});
-  document.getElementById('meta-nome').value=''; document.getElementById('meta-valor').value='';
-  renderizarMetas();
+  if (!currentUser) return;
+  try {
+    const id = await adicionarMeta(currentUser.uid, {nome, objetivo:valor, atual:0});
+    metas.push({id, nome, objetivo:valor, atual:0});
+    document.getElementById('meta-nome').value=''; document.getElementById('meta-valor').value='';
+    renderizarMetas();
+  } catch(e) { console.error('Erro ao criar meta:', e); }
 }
 
 function renderizarMetas() {
@@ -278,10 +368,17 @@ function abrirModalMeta(index) {
 
 function fecharModalMeta() { document.getElementById('modal-meta').classList.add('hidden'); }
 
-function adicionarMeta() {
+async function adicionarValorMeta() {
   const valor=parseFloat(document.getElementById('modal-meta-valor').value);
   if (!valor||valor<=0) { alert('Digite um valor válido!'); return; }
-  metas[metaAtualIndex].atual+=valor; fecharModalMeta(); renderizarMetas();
+  if (!currentUser) return;
+  const meta = metas[metaAtualIndex];
+  if (!meta) return;
+  meta.atual += valor;
+  try {
+    if (meta.id) await atualizarMeta(currentUser.uid, meta.id, {atual: meta.atual});
+  } catch(e) { console.error('Erro ao atualizar meta:', e); }
+  fecharModalMeta(); renderizarMetas();
 }
 
 // DÍVIDAS
@@ -474,7 +571,14 @@ function fecharArtigo() { document.getElementById('modal-artigo').classList.add(
 ['modal','modal-artigo','modal-meta','modal-editar'].forEach(id=>{ const el=document.getElementById(id); if(el)el.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');}); });
 
 // AUTH & TEMA
-function logout() { if(confirm('Deseja sair da sua conta?')){localStorage.removeItem('monvy_logado');localStorage.removeItem('monvy_logged');window.location.href='auth.html';} }
+async function logout() {
+  if(confirm('Deseja sair da sua conta?')) {
+    if (unsubMovimentacoes) unsubMovimentacoes();
+    await fbLogout();
+    localStorage.removeItem('monvy_theme');
+    window.location.href = 'auth.html';
+  }
+}
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme',theme);
@@ -591,53 +695,111 @@ document.addEventListener('click', function(e) {
 });
 
 // INIT
-(function init(){
-  applyTheme(localStorage.getItem('monvy_theme')||'dark');
-  const raw=localStorage.getItem('monvy_logado')||localStorage.getItem('monvy_logged');
-  if(!raw){window.location.href='auth.html';return;}
-  let user; try{user=JSON.parse(raw);}catch(e){window.location.href='auth.html';return;}
-  const nome=user.nome||user.name||'';
-  const avatarEl=document.getElementById('user-avatar');
-  const fotoSalva=localStorage.getItem('monvy_avatar_foto');
-  if(avatarEl){
-    if(fotoSalva)avatarEl.innerHTML='<img src="'+fotoSalva+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-    else if(nome)avatarEl.textContent=nome.charAt(0).toUpperCase();
-    avatarEl.title=nome;
-  }
-  const greetEl=document.getElementById('topbar-greeting');
-  if(greetEl&&nome)greetEl.textContent='Olá, '+nome.split(' ')[0];
-  const dataInput=document.getElementById('modal-data');
-  if(dataInput)dataInput.value=hojeISO();
-})();
+// ===== INIT FIREBASE =====
+applyTheme(localStorage.getItem('monvy_theme')||'dark');
 
+// Carregar Chart.js
 const script=document.createElement('script');
 script.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
 script.onload=()=>atualizarChart();
 document.head.appendChild(script);
 
+onAuth(async (user) => {
+  if (!user) { window.location.href = 'auth.html'; return; }
+  currentUser = user;
+
+  // Preencher avatar e nome
+  const nome = user.displayName || '';
+  const avatarEl = document.getElementById('user-avatar');
+  if (avatarEl) {
+    if (user.photoURL) {
+      avatarEl.innerHTML = '<img src="'+user.photoURL+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    } else if (nome) {
+      avatarEl.textContent = nome.charAt(0).toUpperCase();
+    }
+    avatarEl.title = nome;
+  }
+  const greetEl = document.getElementById('topbar-greeting');
+  if (greetEl && nome) greetEl.textContent = 'Olá, ' + nome.split(' ')[0];
+  const dataInput = document.getElementById('modal-data');
+  if (dataInput) dataInput.value = hojeISO();
+
+  // Verificar onboarding
+  try {
+    const perfil = await getPerfil(user.uid);
+    // Checar onboarding: Firestore é a fonte principal, localStorage é o fallback
+    const onboardingLocal = localStorage.getItem('monvy_onboarding_done') === '1';
+    if (!perfil.onboardingDone && !onboardingLocal) {
+      window.location.href = 'onboarding.html';
+      return;
+    }
+    // Se localStorage indica feito mas Firestore não, sincronizar
+    if (!perfil.onboardingDone && onboardingLocal) {
+      try {
+        const { marcarOnboardingFeito } = await import('./firebase.js');
+        await marcarOnboardingFeito(user.uid);
+      } catch(e) { console.warn('Erro ao sincronizar onboarding:', e); }
+    }
+
+    // Carregar perfil de vida para categorias
+    if (perfil.perfilVida) {
+      localStorage.setItem('monvy_perfil_vida', JSON.stringify(perfil.perfilVida));
+    }
+
+    // Sincronizar nome e foto do Firebase com localStorage e UI
+    const nomeFirebase = perfil.nome || user.displayName || '';
+    const fotoFirebase = perfil.foto || user.photoURL || null;
+    if (nomeFirebase) {
+      let userData = {};
+      const raw = localStorage.getItem('monvy_logado') || localStorage.getItem('monvy_logged');
+      if (raw) { try { userData = JSON.parse(raw); } catch(e){} }
+      userData.nome = nomeFirebase; userData.name = nomeFirebase;
+      const key = localStorage.getItem('monvy_logado') ? 'monvy_logado' : 'monvy_logged';
+      localStorage.setItem(key, JSON.stringify(userData));
+    }
+    if (fotoFirebase && fotoFirebase.startsWith('data:')) {
+      localStorage.setItem('monvy_avatar_foto', fotoFirebase);
+    }
+    if (typeof aplicarPerfilUI === 'function') {
+      const fotoLocal = localStorage.getItem('monvy_avatar_foto');
+      aplicarPerfilUI(nomeFirebase, fotoLocal || fotoFirebase || null);
+    }
+
+    // Carregar metas
+    metas = await getMetas(user.uid);
+    atualizarListaMetas();
+
+    // Carregar dívidas
+    dividasCadastradas = await getDividas(user.uid);
+    if (typeof renderizarDividas === 'function') renderizarDividas();
+
+    // Ouvir movimentações em tempo real
+    if (unsubMovimentacoes) unsubMovimentacoes();
+    unsubMovimentacoes = ouvirMovimentacoes(user.uid, (movs) => {
+      movimentacoes = movs;
+      recalcular();
+      renderizarMovimentacoes();
+      atualizarChart();
+      atualizarTelaCategorias();
+    });
+  } catch(e) {
+    console.error('Erro ao carregar dados:', e);
+  }
+});
+
 // ==============================
 // NOVOS MÓDULOS v17
 // ==============================
 
-// ===== ONBOARDING CHECK =====
-(function verificarOnboarding() {
-  const done = localStorage.getItem('monvy_onboarding_done');
-  const raw = localStorage.getItem('monvy_logado') || localStorage.getItem('monvy_logged');
-  if (!done && raw) {
-    // Atrasar para não conflitar com o redirect de auth
-    setTimeout(() => {
-      if (!localStorage.getItem('monvy_onboarding_done')) {
-        window.location.href = 'onboarding.html';
-      }
-    }, 100);
-  }
-})();
-
 // ===== DÍVIDAS CADASTRADAS =====
-let dividasCadastradas = JSON.parse(localStorage.getItem('monvy_dividas') || '[]');
+let dividasCadastradas = [];
 
 const DIVIDA_ICONS = {
-  cartao: '💳', emprestimo: '💸', financiamento: '🏦', terceiros: '🤝', outros: '📋'
+  cartao: '<img src="icone-cartao-novo.png" style="width:22px;height:22px;object-fit:contain;vertical-align:middle">',
+  emprestimo: '<img src="icone-emprestimo.png" style="width:22px;height:22px;object-fit:contain;vertical-align:middle">',
+  financiamento: '<img src="icone-banco.png" style="width:22px;height:22px;object-fit:contain;vertical-align:middle">',
+  terceiros: '<img src="icone-terceiros.png" style="width:22px;height:22px;object-fit:contain;vertical-align:middle">',
+  outros: '<img src="icone-outros.png" style="width:22px;height:22px;object-fit:contain;vertical-align:middle">'
 };
 const DIVIDA_LABELS = {
   cartao: 'Cartão de crédito', emprestimo: 'Empréstimo', financiamento: 'Financiamento', terceiros: 'Terceiros', outros: 'Outros'
@@ -651,7 +813,7 @@ function atualizarFormDivida() {
   if (jurosArea) jurosArea.style.display = tipo === 'terceiros' ? 'none' : 'block';
 }
 
-function cadastrarDivida() {
+async function cadastrarDivida() {
   const tipo = document.getElementById('div-tipo').value;
   const descricao = document.getElementById('div-descricao').value.trim();
   const valor = parseFloat(document.getElementById('div-valor').value);
@@ -675,8 +837,13 @@ function cadastrarDivida() {
     dataCriacao: new Date().toISOString().slice(0,10)
   };
 
+  if (currentUser) {
+    try {
+      const fbId = await adicionarDivida(currentUser.uid, divida);
+      divida.id = fbId;
+    } catch(e) { console.error('Erro ao salvar dívida:', e); }
+  }
   dividasCadastradas.push(divida);
-  salvarDividas();
   renderizarDividas();
   atualizarKPIsDividas();
 
@@ -691,16 +858,18 @@ function cadastrarDivida() {
   if (sucesso) { sucesso.style.display = 'block'; setTimeout(() => sucesso.style.display = 'none', 2000); }
 }
 
-function excluirDivida(id) {
+async function excluirDivida(id) {
   if (!confirm('Remover esta dívida?')) return;
+  if (currentUser) {
+    try { await deletarDivida(currentUser.uid, id); } catch(e) { console.error(e); }
+  }
   dividasCadastradas = dividasCadastradas.filter(d => d.id !== id);
-  salvarDividas();
   renderizarDividas();
   atualizarKPIsDividas();
 }
 
-function salvarDividas() {
-  localStorage.setItem('monvy_dividas', JSON.stringify(dividasCadastradas));
+async function salvarDividas() {
+  // Dados já salvos individualmente no Firestore — sem ação necessária
 }
 
 function renderizarDividas() {
@@ -865,6 +1034,10 @@ function salvarPerfilVida() {
   const perfil = window._perfilVidaTemp || JSON.parse(localStorage.getItem('monvy_perfil_vida') || '{}');
   localStorage.setItem('monvy_perfil_vida', JSON.stringify(perfil));
   window._perfilVidaTemp = null;
+  // Sincronizar com Firebase
+  if (currentUser) {
+    fbSalvarPerfilVida(currentUser.uid, perfil).catch(e => console.error('Erro ao salvar perfil de vida no Firebase:', e));
+  }
   const suc = document.getElementById('vida-sucesso');
   if (suc) { suc.style.display = 'block'; setTimeout(() => suc.style.display = 'none', 2000); }
 }
@@ -875,6 +1048,10 @@ function salvarPerfilFinancas() {
   if (window._perfilVidaTemp?.metaEconomia !== undefined) perfil.metaEconomia = window._perfilVidaTemp.metaEconomia;
   perfil.renda = renda;
   localStorage.setItem('monvy_perfil_vida', JSON.stringify(perfil));
+  // Sincronizar com Firebase
+  if (currentUser) {
+    fbSalvarPerfilVida(currentUser.uid, perfil).catch(e => console.error('Erro ao salvar finanças no Firebase:', e));
+  }
   const suc = document.getElementById('financas-sucesso');
   if (suc) { suc.style.display = 'block'; setTimeout(() => suc.style.display = 'none', 2000); }
 }
@@ -906,7 +1083,8 @@ const CATEGORIAS_CONFIG = [
     id: 'cat-moradia',
     label: 'Moradia',         // aluguel
     labelAlt: 'Financiamento',// financiada
-    icon: 'icone-casa.png',
+    icon: 'icone-aluguel.png',
+    iconFn: (p) => p.moradia === 'financiada' ? 'icone-financiamento.png' : 'icone-aluguel.png',
     ativo: (p) => ['aluguel','financiada'].includes(p.moradia),
     labelFn: (p) => p.moradia === 'financiada' ? 'Financiamento' : 'Aluguel',
     cat: (p) => p.moradia === 'financiada' ? 'Financiamento' : 'Aluguel',
@@ -916,7 +1094,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-alimentacao',
     label: 'Alimentação',
-    icon: 'icone-alimentacao.png',
+    icon: 'icone-alimentacao-novo.png',
     ativo: () => true,       // sempre ativo
     cat: () => 'Alimentação',
     metaPct: 0.15,
@@ -925,7 +1103,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-carro',
     label: 'Carro',
-    icon: 'icone-carro.png',
+    icon: 'icone-carro-novo.png',
     ativo: (p) => (p.transporte || []).includes('carro'),
     cat: () => 'Carro',
     metaPct: 0.10,
@@ -934,7 +1112,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-moto',
     label: 'Moto',
-    icon: 'icone-moto.png',
+    icon: 'icone-moto-novo.png',
     ativo: (p) => (p.transporte || []).includes('moto'),
     cat: () => 'Moto',
     metaPct: 0.07,
@@ -943,11 +1121,12 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-transporte',
     label: 'Transporte',
-    icon: 'icone-carro.png',
+    icon: 'icone-onibus.png',
     iconFn: (p) => {
       const t = p.transporte || [];
-      if (t.includes('app') && !t.includes('publico')) return 'icone-carro.png';
-      return 'icone-carro.png';
+      if (t.includes('app') && !t.includes('publico') && !t.includes('bike')) return 'icone-app.png';
+      if (t.includes('bike')) return 'icone-bike.png';
+      return 'icone-onibus.png';
     },
     ativo: (p) => {
       const t = p.transporte || [];
@@ -960,7 +1139,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-educacao',
     label: 'Educação',
-    icon: 'icone-cadeado.png',
+    icon: 'icone-bebe.png',
     ativo: (p) => p.filhos === 'sim',
     cat: () => 'Educação',
     metaPct: 0.08,
@@ -969,7 +1148,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-saude',
     label: 'Saúde',
-    icon: 'icone-saude.png',
+    icon: 'icone-saude-novo.png',
     ativo: () => true,
     cat: () => 'Saúde',
     metaPct: 0.08,
@@ -978,7 +1157,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-pets',
     label: 'Pets',
-    icon: 'icone-caixa.png',
+    icon: 'icone-pets.png',
     ativo: (p) => (p.familia || []).includes('pets'),
     cat: () => 'Pets',
     metaPct: 0.05,
@@ -987,7 +1166,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-lazer',
     label: 'Lazer',
-    icon: 'icone-cartao02.png',
+    icon: 'icone-lazer.png',
     ativo: () => true,
     cat: () => 'Lazer',
     metaPct: 0.10,
@@ -996,7 +1175,7 @@ const CATEGORIAS_CONFIG = [
   {
     id: 'cat-outros',
     label: 'Outros',
-    icon: 'icone-caixa.png',
+    icon: 'icone-outros.png',
     ativo: () => true,
     cat: () => 'Outros',
     metaPct: 0.05,
@@ -1126,7 +1305,7 @@ function renderizarSugestaoOrcamento() {
   el.style.display = 'block';
   el.innerHTML = `<div class="orcamento-sugestao">
     <div class="orcamento-sugestao-titulo">
-      <span>📊</span>
+      <span><img src="icone-grafico-novo.png" style="width:28px;height:28px;object-fit:contain;vertical-align:middle"></span>
       Sugestão 50·30·20 — baseada na sua renda de ${fmt(renda)}/mês
       <div style="margin-left:auto;font-size:.72rem;color:var(--gray);font-weight:400">Gastos este mês: <strong style="color:${pctGasto>=100?'#ef4444':pctGasto>=75?'#f59e0b':'var(--primary)'}">${fmt(gastosMes)}</strong></div>
     </div>
@@ -1219,3 +1398,51 @@ window.addEventListener('load', () => {
   renderizarGridCategorias();
   atualizarBannerPerfil();
 });
+
+// ==============================
+// EXPOR FUNÇÕES GLOBALMENTE
+// Necessário porque script.js usa type="module"
+// e funções de módulo não ficam no escopo window
+// ==============================
+window.irPara           = window.irPara || irPara;
+window.abrirModal       = abrirModal;
+window.fecharModal      = fecharModal;
+window.confirmarModal   = confirmarModal;
+window.responderPergunta = responderPergunta;
+window.abrirModalEditar = abrirModalEditar;
+window.fecharModalEditar = fecharModalEditar;
+window.salvarEdicao     = salvarEdicao;
+window.excluirMovimentacao = excluirMovimentacao;
+window.setFiltro        = setFiltro;
+window.setTipoGrafico   = setTipoGrafico;
+window.criarMeta        = criarMeta;
+window.abrirModalMeta   = abrirModalMeta;
+window.fecharModalMeta  = fecharModalMeta;
+window.adicionarValorMeta = adicionarValorMeta;
+window.calcularDivida   = calcularDivida;
+window.calcularInvestimentos = calcularInvestimentos;
+window.abrirArtigo      = abrirArtigo;
+window.fecharArtigo     = fecharArtigo;
+window.logout           = logout;
+window.toggleTheme      = toggleTheme;
+window.applyTheme       = applyTheme;
+window.mudarMesRelatorio = mudarMesRelatorio;
+window.setPeriodoModo   = setPeriodoModo;
+window.aplicarPeriodoCustom = aplicarPeriodoCustom;
+window.atalhoUltimos    = atalhoUltimos;
+window.processarRecorrentes = processarRecorrentes;
+window.buscarMovimentacoes = buscarMovimentacoes;
+window.limparBusca      = limparBusca;
+window.abrirBuscaMobile = abrirBuscaMobile;
+window.fecharBuscaMobile = fecharBuscaMobile;
+window.fecharDropdownBusca = fecharDropdownBusca;
+window.mostrarDropdownBusca = mostrarDropdownBusca;
+window.atualizarFormDivida  = atualizarFormDivida;
+window.cadastrarDivida      = cadastrarDivida;
+window.excluirDivida        = excluirDivida;
+window.abrirTabPerfil       = abrirTabPerfil;
+window.selecionarVida       = selecionarVida;
+window.selecionarVidaMulti  = selecionarVidaMulti;
+window.setMetaEco           = setMetaEco;
+window.salvarPerfilVida     = window.salvarPerfilVida || salvarPerfilVida;
+window.salvarPerfilFinancas = salvarPerfilFinancas;

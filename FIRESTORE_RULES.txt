@@ -1,0 +1,40 @@
+======================================
+MONVY — REGRAS DE SEGURANÇA FIRESTORE
+======================================
+
+Cole estas regras no Firebase Console:
+  Firestore Database → Regras (Rules)
+
+--------------------------------------
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Cada usuário só acessa seus próprios dados
+    match /usuarios/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Subcoleções: movimentações, metas, dívidas
+      match /movimentacoes/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      match /metas/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      match /dividas/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
+
+--------------------------------------
+COMO APLICAR:
+1. Acesse https://console.firebase.google.com
+2. Selecione o projeto "monvy-5969f"
+3. Clique em "Firestore Database" no menu lateral
+4. Clique na aba "Regras" (Rules)
+5. Apague o conteúdo atual e cole as regras acima
+6. Clique em "Publicar" (Publish)
+--------------------------------------

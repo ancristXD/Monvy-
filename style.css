@@ -15,6 +15,8 @@
   --surface: #111827;
   --surface-2: #1A2235;
   --surface-3: #1F2D45;
+  --card-bg: #161b27;
+  --input-bg: rgba(255,255,255,0.06);
   --border: rgba(255, 255, 255, 0.06);
   --border-hover: rgba(255, 255, 255, 0.12);
 
@@ -52,6 +54,8 @@
   --gray-3: #334155;
   --red-dim: rgba(239, 68, 68, 0.10);
   --yellow-dim: rgba(245, 158, 11, 0.10);
+  --card-bg: #FFFFFF;
+  --input-bg: rgba(0,0,0,0.04);
 }
 
 [data-theme="light"] body {
@@ -73,6 +77,14 @@
 [data-theme="light"] .sidebar { border-right-color: rgba(0,0,0,0.07); }
 [data-theme="light"] select option { background: #FFFFFF; color: #0F172A; }
 [data-theme="light"] input, [data-theme="light"] select { color: #0F172A; }
+[data-theme="light"] .perfil-tab { color: #64748B; }
+[data-theme="light"] .perfil-tab.active { background: #FFFFFF; color: #0F172A; box-shadow: 0 1px 6px rgba(0,0,0,0.10); }
+[data-theme="light"] .vida-opt { background: rgba(0,0,0,0.03); color: #64748B; }
+[data-theme="light"] .vida-opt:hover { color: #0F172A; }
+[data-theme="light"] .vida-opt.selected { color: #0F172A; }
+[data-theme="light"] .modal-box input, [data-theme="light"] .modal-box select { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.10); color: #0F172A; }
+[data-theme="light"] .perfil-avatar-preview { border-color: var(--primary); }
+[data-theme="light"] .modal-box { box-shadow: 0 8px 40px rgba(0,0,0,0.15); }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -2248,18 +2260,5 @@ html, body {
 /* Cat novo (categoria adicionada pelo perfil) — brilho sutil */
 .cat-card.cat-novo {
   border-color: rgba(0,200,83,0.25);
-}
-.cat-card.cat-novo::after {
-  content: 'novo';
-  position: absolute;
-  top: 8px; right: 8px;
-  font-size: .55rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  color: var(--primary);
-  background: rgba(0,200,83,0.12);
-  padding: 2px 5px;
-  border-radius: 4px;
 }
 

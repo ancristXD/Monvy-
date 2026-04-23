@@ -19,7 +19,7 @@
     </div>
     <nav>
       <a href="#" class="nav-item active" data-tela="inicio" title="Início">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
       </a>
       <a href="#" class="nav-item" data-tela="gastos" title="Gastos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -28,7 +28,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
       </a>
       <a href="#" class="nav-item" data-tela="dividas" title="Dívidas">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       </a>
       <a href="#" class="nav-item" data-tela="investimentos" title="Investimentos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
@@ -37,7 +37,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
       </a>
       <a href="#" class="nav-item" data-tela="relatorio" title="Relatório">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </a>
     </nav>
     <div class="sidebar-bottom">
@@ -184,7 +184,7 @@
         <!-- Banner perfil adaptativo -->
         <div id="gastos-perfil-banner" style="display:none;background:linear-gradient(135deg,rgba(0,200,83,0.08),rgba(0,200,83,0.03));border:1px solid rgba(0,200,83,0.18);border-radius:14px;padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:1.3rem">✨</span>
+            <img src="icone-usuario.png" alt="" style="width:28px;height:28px;object-fit:contain;">
             <div>
               <div style="font-size:.82rem;font-weight:600;color:var(--white)">Categorias adaptadas ao seu perfil</div>
               <div id="gastos-perfil-desc" style="font-size:.74rem;color:var(--gray);margin-top:1px"></div>
@@ -268,7 +268,7 @@
       <section id="tela-metas" class="tela">
         <div class="two-col">
           <div class="form-card">
-            <div class="card-title" style="margin-bottom:20px;display:flex;align-items:center;gap:12px"><img src="icone-meta.png" alt="Meta" style="width:36px;height:36px;object-fit:contain;"> Nova Meta</div>
+            <div class="card-title" style="margin-bottom:20px;display:flex;align-items:center;gap:12px"><img src="icone-meta-novo.png" alt="Meta" style="width:36px;height:36px;object-fit:contain;"> Nova Meta</div>
             <input type="text" id="meta-nome" placeholder="Nome da meta">
             <input type="number" id="meta-valor" placeholder="Valor objetivo (R$)">
             <button class="btn-primary" onclick="criarMeta()">Criar meta</button>
@@ -287,9 +287,9 @@
 
         <!-- KPIs de Dívidas -->
         <div class="kpi-row" id="dividas-kpis">
-          <div class="kpi-card primary-card" style="border-color:rgba(239,68,68,0.3)">
+          <div class="kpi-card primary-card">
             <div class="kpi-label">Total em Dívidas</div>
-            <div class="kpi-value" id="div-kpi-total" style="color:#ef4444">R$ 0,00</div>
+            <div class="kpi-value" id="div-kpi-total">R$ 0,00</div>
             <div class="kpi-sub" id="div-kpi-qtd">Nenhuma dívida cadastrada</div>
           </div>
           <div class="kpi-card">
@@ -317,19 +317,62 @@
           <!-- Formulário de nova dívida -->
           <div class="form-card">
             <div class="card-title" style="margin-bottom:20px;display:flex;align-items:center;gap:12px">
-              <img src="icone-cartao.png" alt="Dívida" style="width:36px;height:36px;object-fit:contain;">
+              <img src="icone-cadeado-novo.png" alt="Dívida" style="width:36px;height:36px;object-fit:contain;">
               <span id="div-form-titulo">Cadastrar Dívida</span>
             </div>
-            <div style="margin-bottom:12px">
+            <div style="margin-bottom:12px;position:relative">
               <label style="font-size:.8rem;color:var(--gray);display:block;margin-bottom:6px">Tipo de dívida</label>
-              <select id="div-tipo" onchange="atualizarFormDivida()" style="width:100%;background:var(--input-bg,rgba(255,255,255,0.06));border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--white);font-size:.9rem;outline:none;font-family:inherit">
-                <option value="cartao">💳 Cartão de crédito</option>
-                <option value="emprestimo">💸 Empréstimo pessoal</option>
-                <option value="financiamento">🏦 Financiamento (carro/casa)</option>
-                <option value="terceiros">🤝 Dívida com terceiros</option>
-                <option value="outros">📋 Outros</option>
-              </select>
+              <input type="hidden" id="div-tipo" value="cartao">
+              <div id="div-tipo-selected" onclick="toggleDivTipoDropdown()" style="width:100%;background:var(--input-bg,rgba(255,255,255,0.06));border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--white);font-size:.9rem;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:10px;box-sizing:border-box;user-select:none">
+                <img src="icone-cartao-novo.png" style="width:20px;height:20px;object-fit:contain;flex-shrink:0">
+                <span>Cartão de crédito</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-left:auto;opacity:.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div id="div-tipo-dropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface,#1a2236);border:1px solid var(--border);border-radius:10px;overflow:hidden;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.4)">
+                <div class="div-tipo-opt" data-value="cartao" data-label="Cartão de crédito" data-icon="icone-cartao-novo.png" onclick="selecionarDivTipo(this)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:var(--white);font-size:.9rem;transition:background .15s">
+                  <img src="icone-cartao-novo.png" style="width:20px;height:20px;object-fit:contain;flex-shrink:0"><span>Cartão de crédito</span>
+                </div>
+                <div class="div-tipo-opt" data-value="emprestimo" data-label="Empréstimo pessoal" data-icon="icone-emprestimo.png" onclick="selecionarDivTipo(this)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:var(--white);font-size:.9rem;transition:background .15s">
+                  <img src="icone-emprestimo.png" style="width:20px;height:20px;object-fit:contain;flex-shrink:0"><span>Empréstimo pessoal</span>
+                </div>
+                <div class="div-tipo-opt" data-value="financiamento" data-label="Financiamento (carro/casa)" data-icon="icone-financiamento.png" onclick="selecionarDivTipo(this)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:var(--white);font-size:.9rem;transition:background .15s">
+                  <img src="icone-financiamento.png" style="width:20px;height:20px;object-fit:contain;flex-shrink:0"><span>Financiamento (carro/casa)</span>
+                </div>
+                <div class="div-tipo-opt" data-value="terceiros" data-label="Dívida com terceiros" data-icon="icone-terceiros.png" onclick="selecionarDivTipo(this)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:var(--white);font-size:.9rem;transition:background .15s">
+                  <img src="icone-terceiros.png" style="width:20px;height:20px;object-fit:contain;flex-shrink:0"><span>Dívida com terceiros</span>
+                </div>
+                <div class="div-tipo-opt" data-value="outros" data-label="Outros" data-icon="icone-outros.png" onclick="selecionarDivTipo(this)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:var(--white);font-size:.9rem;transition:background .15s">
+                  <img src="icone-outros.png" style="width:20px;height:20px;object-fit:contain;flex-shrink:0"><span>Outros</span>
+                </div>
+              </div>
             </div>
+            <script>
+            function toggleDivTipoDropdown() {
+              const dd = document.getElementById('div-tipo-dropdown');
+              dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+            }
+            function selecionarDivTipo(el) {
+              const value = el.dataset.value;
+              const label = el.dataset.label;
+              const icon = el.dataset.icon;
+              document.getElementById('div-tipo').value = value;
+              const sel = document.getElementById('div-tipo-selected');
+              sel.querySelector('img').src = icon;
+              sel.querySelector('span').textContent = label;
+              document.getElementById('div-tipo-dropdown').style.display = 'none';
+              atualizarFormDivida();
+            }
+            document.addEventListener('click', function(e) {
+              if (!e.target.closest('#div-tipo-selected') && !e.target.closest('#div-tipo-dropdown')) {
+                const dd = document.getElementById('div-tipo-dropdown');
+                if (dd) dd.style.display = 'none';
+              }
+            });
+            document.querySelectorAll('.div-tipo-opt').forEach(opt => {
+              opt.addEventListener('mouseover', () => opt.style.background = 'rgba(255,255,255,0.06)');
+              opt.addEventListener('mouseout', () => opt.style.background = '');
+            });
+            </script>
             <input type="text" id="div-descricao" placeholder="Descrição (ex: Cartão Nubank)">
             <input type="number" id="div-valor" placeholder="Valor total da dívida (R$)" min="0">
             <div id="div-juros-area">
@@ -372,7 +415,7 @@
 
             <!-- Estratégia de quitação -->
             <div id="estrategia-card" style="display:none;margin-top:20px;background:var(--card-bg,#161b27);border:1px solid var(--border);border-radius:16px;padding:20px">
-              <div class="card-title" style="margin-bottom:10px;font-size:.95rem">💡 Estratégia sugerida</div>
+              <div class="card-title" style="margin-bottom:10px;font-size:.95rem"><img src="icone-meta-novo.png" alt="" style="width:22px;height:22px;object-fit:contain;"> Estratégia sugerida</div>
               <div id="estrategia-texto" style="font-size:.85rem;color:var(--gray);line-height:1.6"></div>
             </div>
           </div>
@@ -384,27 +427,27 @@
       <section id="tela-investimentos" class="tela">
         <div class="two-col">
           <div class="form-card">
-            <div class="card-title" style="margin-bottom:20px;display:flex;align-items:center;gap:12px"><img src="icone-investimento.png" alt="Investimento" style="width:36px;height:36px;object-fit:contain;"> Simular Investimento</div>
+            <div class="card-title" style="margin-bottom:20px;display:flex;align-items:center;gap:12px"><img src="icone-investimento-novo.png" alt="Investimento" style="width:36px;height:36px;object-fit:contain;"> Simular Investimento</div>
             <input type="number" id="inv-valor" placeholder="Valor a investir (R$)">
             <input type="number" id="inv-meses" placeholder="Prazo (meses)">
             <button class="btn-primary" onclick="calcularInvestimentos()">Comparar</button>
           </div>
           <div id="resultado-inv" class="inv-cards hidden">
             <div class="inv-card poupanca">
-              <div class="inv-nome"><img src="icone-bolsa.png" alt="Poupança" style="width:28px;height:28px;object-fit:contain;"> Poupança</div>
+              <div class="inv-nome"><img src="icone-cofre.png" alt="Poupança" style="width:32px;height:32px;object-fit:contain;"> Poupança</div>
               <div class="inv-taxa">~0,5% ao mês</div>
               <div class="inv-total" id="inv-poupanca">—</div>
               <div class="inv-ganho" id="inv-poupanca-ganho">—</div>
             </div>
             <div class="inv-card selic">
               <div class="inv-badge">Recomendado</div>
-              <div class="inv-nome"><img src="icone-escudo.png" alt="Selic" style="width:28px;height:28px;object-fit:contain;"> Tesouro Selic</div>
+              <div class="inv-nome"><img src="icone-banco.png" alt="Selic" style="width:32px;height:32px;object-fit:contain;"> Tesouro Selic</div>
               <div class="inv-taxa">~0,9% ao mês</div>
               <div class="inv-total" id="inv-selic">—</div>
               <div class="inv-ganho" id="inv-selic-ganho">—</div>
             </div>
             <div class="inv-card cdb">
-              <div class="inv-nome"><img src="icone-grafico.png" alt="CDB" style="width:28px;height:28px;object-fit:contain;"> CDB 110%</div>
+              <div class="inv-nome"><img src="icone-grafico-novo.png" alt="CDB" style="width:32px;height:32px;object-fit:contain;"> CDB 110%</div>
               <div class="inv-taxa">~1,0% ao mês</div>
               <div class="inv-total" id="inv-cdb">—</div>
               <div class="inv-ganho" id="inv-cdb-ganho">—</div>
@@ -417,12 +460,12 @@
       <!-- ===== TELA: APRENDER ===== -->
       <section id="tela-aprender" class="tela">
         <div class="artigos-grid">
-          <div class="artigo-card" onclick="abrirArtigo(0)"><div class="artigo-emoji"><img src="icone-escudo.png" alt="Reserva" style="width:64px;height:64px;object-fit:contain;"></div><h3>Reserva de emergência</h3><p>Por que esse é o primeiro passo para sua saúde financeira.</p><span class="artigo-link">Ler artigo →</span></div>
-          <div class="artigo-card" onclick="abrirArtigo(1)"><div class="artigo-emoji"><img src="icone-cartao.png" alt="Cartão" style="width:64px;height:64px;object-fit:contain;"></div><h3>Cartão de crédito</h3><p>Os perigos do rotativo e como usar sem se prejudicar.</p><span class="artigo-link">Ler artigo →</span></div>
-          <div class="artigo-card" onclick="abrirArtigo(2)"><div class="artigo-emoji"><img src="icone-cadeado.png" alt="Dívidas" style="width:64px;height:64px;object-fit:contain;"></div><h3>Sair das dívidas</h3><p>Um plano simples e direto para quitar suas dívidas.</p><span class="artigo-link">Ler artigo →</span></div>
-          <div class="artigo-card" onclick="abrirArtigo(3)"><div class="artigo-emoji"><img src="icone-cerebro.png" alt="Mente" style="width:64px;height:64px;object-fit:contain;"></div><h3>Necessidade vs Desejo</h3><p>Aprenda a diferença e tome decisões melhores.</p><span class="artigo-link">Ler artigo →</span></div>
-          <div class="artigo-card" onclick="abrirArtigo(4)"><div class="artigo-emoji"><img src="icone-grafico.png" alt="Gráfico" style="width:64px;height:64px;object-fit:contain;"></div><h3>Regra dos 50-30-20</h3><p>O jeito mais simples de organizar seu salário.</p><span class="artigo-link">Ler artigo →</span></div>
-          <div class="artigo-card" onclick="abrirArtigo(5)"><div class="artigo-emoji"><img src="icone-planta.png" alt="Investir" style="width:64px;height:64px;object-fit:contain;"></div><h3>Como começar a investir</h3><p>Invista mesmo com pouco dinheiro. Comece agora.</p><span class="artigo-link">Ler artigo →</span></div>
+          <div class="artigo-card" onclick="abrirArtigo(0)"><div class="artigo-emoji"><img src="icone-cofre.png" alt="Reserva" style="width:64px;height:64px;object-fit:contain;"></div><h3>Reserva de emergência</h3><p>Por que esse é o primeiro passo para sua saúde financeira.</p><span class="artigo-link">Ler artigo →</span></div>
+          <div class="artigo-card" onclick="abrirArtigo(1)"><div class="artigo-emoji"><img src="icone-cartao-novo.png" alt="Cartão" style="width:64px;height:64px;object-fit:contain;"></div><h3>Cartão de crédito</h3><p>Os perigos do rotativo e como usar sem se prejudicar.</p><span class="artigo-link">Ler artigo →</span></div>
+          <div class="artigo-card" onclick="abrirArtigo(2)"><div class="artigo-emoji"><img src="icone-cadeado-novo.png" alt="Dívidas" style="width:64px;height:64px;object-fit:contain;"></div><h3>Sair das dívidas</h3><p>Um plano simples e direto para quitar suas dívidas.</p><span class="artigo-link">Ler artigo →</span></div>
+          <div class="artigo-card" onclick="abrirArtigo(3)"><div class="artigo-emoji"><img src="icone-cerebro-novo.png" alt="Mente" style="width:64px;height:64px;object-fit:contain;"></div><h3>Necessidade vs Desejo</h3><p>Aprenda a diferença e tome decisões melhores.</p><span class="artigo-link">Ler artigo →</span></div>
+          <div class="artigo-card" onclick="abrirArtigo(4)"><div class="artigo-emoji"><img src="icone-grafico-novo.png" alt="Gráfico" style="width:64px;height:64px;object-fit:contain;"></div><h3>Regra dos 50-30-20</h3><p>O jeito mais simples de organizar seu salário.</p><span class="artigo-link">Ler artigo →</span></div>
+          <div class="artigo-card" onclick="abrirArtigo(5)"><div class="artigo-emoji"><img src="icone-investimento-novo.png" alt="Investir" style="width:64px;height:64px;object-fit:contain;"></div><h3>Como começar a investir</h3><p>Invista mesmo com pouco dinheiro. Comece agora.</p><span class="artigo-link">Ler artigo →</span></div>
         </div>
       </section>
 
@@ -622,31 +665,31 @@
     </div>
     <nav class="drawer-nav">
       <a href="#" class="drawer-item active" data-tela="inicio" onclick="navegarDrawer(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <img src="icone-casa-propria.png" alt="Início" style="width:22px;height:22px;object-fit:contain">
         <span>Início</span>
       </a>
       <a href="#" class="drawer-item" data-tela="gastos" onclick="navegarDrawer(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <img src="icone-dinheiro.png" alt="Gastos" style="width:22px;height:22px;object-fit:contain">
         <span>Gastos</span>
       </a>
       <a href="#" class="drawer-item" data-tela="metas" onclick="navegarDrawer(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <img src="icone-meta-novo.png" alt="Metas" style="width:22px;height:22px;object-fit:contain">
         <span>Metas</span>
       </a>
       <a href="#" class="drawer-item" data-tela="dividas" onclick="navegarDrawer(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <img src="icone-cartao-novo.png" alt="Dívidas" style="width:24px;height:24px;object-fit:contain">
         <span>Dívidas</span>
       </a>
       <a href="#" class="drawer-item" data-tela="investimentos" onclick="navegarDrawer(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <img src="icone-investimento-novo.png" alt="Investimentos" style="width:24px;height:24px;object-fit:contain">
         <span>Investimentos</span>
       </a>
       <a href="#" class="drawer-item" data-tela="aprender" onclick="navegarDrawer(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        <img src="icone-cerebro-novo.png" alt="Aprender" style="width:22px;height:22px;object-fit:contain">
         <span>Aprender</span>
       </a>
       <a href="#" class="drawer-item" data-tela="relatorio" onclick="navegarDrawer(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        <img src="icone-relatorio.png" alt="Relatório" style="width:22px;height:22px;object-fit:contain">
         <span>Relatório</span>
       </a>
     </nav>
@@ -675,9 +718,9 @@
 
       <!-- Abas -->
       <div style="display:flex;gap:4px;margin-bottom:20px;background:rgba(255,255,255,0.04);border-radius:10px;padding:4px">
-        <button class="perfil-tab active" id="tab-conta" onclick="abrirTabPerfil('conta')">👤 Conta</button>
-        <button class="perfil-tab" id="tab-vida" onclick="abrirTabPerfil('vida')">🏠 Minha vida</button>
-        <button class="perfil-tab" id="tab-financas" onclick="abrirTabPerfil('financas')">💰 Finanças</button>
+        <button class="perfil-tab active" id="tab-conta" onclick="abrirTabPerfil('conta')"><img src="icone-usuario.png" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-right:5px"> Conta</button>
+        <button class="perfil-tab" id="tab-vida" onclick="abrirTabPerfil('vida')"><img src="icone-casa-propria.png" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-right:5px"> Minha vida</button>
+        <button class="perfil-tab" id="tab-financas" onclick="abrirTabPerfil('financas')"><img src="icone-bolsa-novo.png" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-right:5px"> Finanças</button>
       </div>
 
       <!-- Tab: Conta -->
@@ -713,32 +756,32 @@
         <div style="margin-bottom:14px">
           <div style="font-size:.78rem;color:var(--gray);margin-bottom:8px;font-weight:600">MORADIA</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="vida-moradia-opts">
-            <div class="vida-opt" onclick="selecionarVida(this,'moradia','aluguel')"><span>🏠</span>Aluguel</div>
-            <div class="vida-opt" onclick="selecionarVida(this,'moradia','propria')"><span>🏡</span>Casa própria</div>
-            <div class="vida-opt" onclick="selecionarVida(this,'moradia','financiada')"><span>🏗</span>Financiada</div>
-            <div class="vida-opt" onclick="selecionarVida(this,'moradia','outros')"><span>🤝</span>Outros</div>
+            <div class="vida-opt" onclick="selecionarVida(this,'moradia','aluguel')"><span><img src="icone-aluguel.png" style="width:28px;height:28px;object-fit:contain"></span>Aluguel</div>
+            <div class="vida-opt" onclick="selecionarVida(this,'moradia','propria')"><span><img src="icone-casa-propria.png" style="width:28px;height:28px;object-fit:contain"></span>Casa própria</div>
+            <div class="vida-opt" onclick="selecionarVida(this,'moradia','financiada')"><span><img src="icone-financiamento.png" style="width:28px;height:28px;object-fit:contain"></span>Financiada</div>
+            <div class="vida-opt" onclick="selecionarVida(this,'moradia','outros')"><span><img src="icone-terceiros.png" style="width:28px;height:28px;object-fit:contain"></span>Outros</div>
           </div>
         </div>
 
         <div style="margin-bottom:14px">
           <div style="font-size:.78rem;color:var(--gray);margin-bottom:8px;font-weight:600">TRANSPORTE <span style="font-weight:400;font-size:.7rem">(múltiplos)</span></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="vida-transporte-opts">
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','carro')"><span><img src="icone-carro.png" style="width:22px;height:22px;object-fit:contain"></span>Carro</div>
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','moto')"><span><img src="icone-moto.png" style="width:22px;height:22px;object-fit:contain"></span>Moto</div>
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','publico')"><span>🚌</span>Público</div>
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','app')"><span>📱</span>App</div>
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','bike')"><span>🚲</span>Bike</div>
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','nenhum')"><span>🚶</span>A pé</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','carro')"><span><img src="icone-carro-novo.png" style="width:28px;height:28px;object-fit:contain"></span>Carro</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','moto')"><span><img src="icone-moto-novo.png" style="width:28px;height:28px;object-fit:contain"></span>Moto</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','publico')"><span><img src="icone-onibus.png" style="width:28px;height:28px;object-fit:contain"></span>Público</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','app')"><span><img src="icone-app.png" style="width:28px;height:28px;object-fit:contain"></span>App</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','bike')"><span><img src="icone-bike.png" style="width:28px;height:28px;object-fit:contain"></span>Bike</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'transporte','nenhum')"><span><img src="icone-apie.png" style="width:28px;height:28px;object-fit:contain"></span>A pé</div>
           </div>
         </div>
 
         <div style="margin-bottom:14px">
           <div style="font-size:.78rem;color:var(--gray);margin-bottom:8px;font-weight:600">FAMÍLIA</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="vida-opt" onclick="selecionarVida(this,'filhos','sim')" id="vida-filhos-sim"><span>👶</span>Tenho filhos</div>
-            <div class="vida-opt" onclick="selecionarVida(this,'filhos','nao')" id="vida-filhos-nao"><span>🙋</span>Sem filhos</div>
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'familia','dependentes')"><span>👴</span>Dependentes</div>
-            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'familia','pets')"><span>🐾</span>Pets</div>
+            <div class="vida-opt" onclick="selecionarVida(this,'filhos','sim')" id="vida-filhos-sim"><span><img src="icone-familia.png" style="width:28px;height:28px;object-fit:contain"></span>Tenho filhos</div>
+            <div class="vida-opt" onclick="selecionarVida(this,'filhos','nao')" id="vida-filhos-nao"><span><img src="icone-sem-filhos.png" style="width:28px;height:28px;object-fit:contain"></span>Sem filhos</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'familia','dependentes')"><span><img src="icone-dependentes.png" style="width:28px;height:28px;object-fit:contain"></span>Dependentes</div>
+            <div class="vida-opt multi" onclick="selecionarVidaMulti(this,'familia','pets')"><span><img src="icone-pets.png" style="width:28px;height:28px;object-fit:contain"></span>Pets</div>
           </div>
         </div>
 
@@ -759,10 +802,10 @@
         <div>
           <label style="font-size:.78rem;color:var(--gray);display:block;margin-bottom:8px;font-weight:600">META DE ECONOMIA MENSAL</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px" id="meta-eco-opts">
-            <div class="vida-opt" onclick="setMetaEco(this,10)"><span>😊</span>10% da renda</div>
-            <div class="vida-opt" onclick="setMetaEco(this,20)"><span>💪</span>20% da renda</div>
-            <div class="vida-opt" onclick="setMetaEco(this,30)"><span>🚀</span>30% da renda</div>
-            <div class="vida-opt" onclick="setMetaEco(this,0)"><span>🎯</span>Definir depois</div>
+            <div class="vida-opt" onclick="setMetaEco(this,10)"><span><img src="icone-meta-10.png" style="width:36px;height:36px;object-fit:contain"></span>10% da renda</div>
+            <div class="vida-opt" onclick="setMetaEco(this,20)"><span><img src="icone-meta-20.png" style="width:36px;height:36px;object-fit:contain"></span>20% da renda</div>
+            <div class="vida-opt" onclick="setMetaEco(this,30)"><span><img src="icone-meta-30.png" style="width:36px;height:36px;object-fit:contain"></span>30% da renda</div>
+            <div class="vida-opt" onclick="setMetaEco(this,0)"><span><img src="icone-meta-novo.png" style="width:36px;height:36px;object-fit:contain"></span>Definir depois</div>
           </div>
         </div>
         <button class="btn-primary" style="width:100%;margin-top:4px" onclick="salvarPerfilFinancas()">Salvar</button>
@@ -772,7 +815,7 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
   <script>
     // Drawer mobile
     function abrirDrawer() {
@@ -803,9 +846,20 @@
     }
     // ========== PERFIL ==========
     function abrirModalPerfil() {
-      const raw = localStorage.getItem('monvy_logado') || localStorage.getItem('monvy_logged');
+      // Tentar usar o nome do Firebase Auth primeiro (mais atualizado), depois localStorage
       let nome = 'Visitante';
-      if (raw) { try { const u = JSON.parse(raw); nome = u.nome || u.name || nome; } catch(e){} }
+      try {
+        const { auth } = window._firebaseExports || {};
+        if (auth && auth.currentUser && auth.currentUser.displayName) {
+          nome = auth.currentUser.displayName;
+        } else {
+          const raw = localStorage.getItem('monvy_logado') || localStorage.getItem('monvy_logged');
+          if (raw) { try { const u = JSON.parse(raw); nome = u.nome || u.name || nome; } catch(e){} }
+        }
+      } catch(e) {
+        const raw = localStorage.getItem('monvy_logado') || localStorage.getItem('monvy_logged');
+        if (raw) { try { const u = JSON.parse(raw); nome = u.nome || u.name || nome; } catch(e2){} }
+      }
       document.getElementById('perfil-nome-input').value = nome;
       atualizarPreviewNome(nome);
       // Carregar foto salva se existir
@@ -866,10 +920,11 @@
       letraEl.style.display = 'block'; btnRemover.style.display = 'none';
       document.getElementById('perfil-foto-input').value = '';
     }
-    function salvarPerfil() {
+    async function salvarPerfil() {
       const nome = document.getElementById('perfil-nome-input').value.trim() || 'Visitante';
       const imgEl = document.getElementById('perfil-avatar-img');
       const temFoto = imgEl.style.display !== 'none' && imgEl.src && imgEl.src !== window.location.href;
+      const fotoSrc = temFoto ? imgEl.src : null;
 
       // Salvar nome no localStorage
       let userData = {};
@@ -880,14 +935,32 @@
       localStorage.setItem(key, JSON.stringify(userData));
 
       // Salvar foto
-      if (temFoto) {
-        localStorage.setItem('monvy_avatar_foto', imgEl.src);
+      if (fotoSrc) {
+        localStorage.setItem('monvy_avatar_foto', fotoSrc);
       } else {
         localStorage.removeItem('monvy_avatar_foto');
       }
 
+      // Sincronizar com Firebase
+      try {
+        const { auth, db } = await import('./firebase.js');
+        const { updateProfile } = await import('https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js');
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js');
+        const user = auth.currentUser;
+        if (user) {
+          // Atualizar displayName no Firebase Auth
+          await updateProfile(user, { displayName: nome });
+          // Atualizar nome no Firestore
+          const dadosAtualizados = { nome };
+          if (fotoSrc) dadosAtualizados.foto = fotoSrc;
+          await updateDoc(doc(db, 'usuarios', user.uid), dadosAtualizados);
+        }
+      } catch(e) {
+        console.error('Erro ao salvar perfil no Firebase:', e);
+      }
+
       // Atualizar todos os avatares e nomes na UI
-      aplicarPerfilUI(nome, temFoto ? imgEl.src : null);
+      aplicarPerfilUI(nome, fotoSrc);
 
       document.getElementById('perfil-sucesso').style.display = 'block';
       setTimeout(() => fecharModalPerfil(), 1200);
@@ -958,14 +1031,21 @@
       }
     }
     // Sobrescrever toggleTheme para também atualizar o drawer
-    const _originalToggleTheme = typeof toggleTheme === 'function' ? toggleTheme : null;
-    window.toggleTheme = function() {
+    // Usa setTimeout para garantir que o módulo já carregou e definiu window.toggleTheme
+    window._syncDrawerThemeIcon = syncDrawerThemeIcon;
+    window._toggleThemeWithDrawer = function() {
       const current = document.documentElement.getAttribute('data-theme') || 'dark';
       const next = current === 'dark' ? 'light' : 'dark';
       localStorage.setItem('monvy_theme', next);
       if (typeof applyTheme === 'function') applyTheme(next);
       syncDrawerThemeIcon();
     };
+    // Substituir após o módulo carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        window.toggleTheme = window._toggleThemeWithDrawer;
+      }, 200);
+    });
     // Sincronizar ao abrir drawer
     const _originalAbrirDrawer = abrirDrawer;
     window.abrirDrawer = function() {

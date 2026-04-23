@@ -486,12 +486,12 @@
   <p class="section-sub">Seis módulos pensados para quem quer organizar a vida financeira sem complicação.</p>
 
   <div class="features-grid">
-    <div class="feature-card"><div class="feature-icon"><img src="icone-casa.png" alt="Dashboard"></div><div class="feature-title">Dashboard completo</div><div class="feature-desc">Saldo em destaque, entradas, saídas e últimas movimentações numa tela só. Visão geral imediata.</div></div>
-    <div class="feature-card"><div class="feature-icon"><img src="icone-grafico.png" alt="Gastos"></div><div class="feature-title">Gastos por categoria</div><div class="feature-desc">Organize seus gastos em Casa, Alimentação, Transporte, Lazer, Saúde e Outros. Com gráfico de fluxo.</div></div>
-    <div class="feature-card"><div class="feature-icon"><img src="icone-meta.png" alt="Metas"></div><div class="feature-title">Metas de economia</div><div class="feature-desc">Crie metas com valor-alvo e acompanhe com barra de progresso. Adicione valores quando quiser.</div></div>
-    <div class="feature-card"><div class="feature-icon"><img src="icone-cartao.png" alt="Dívidas"></div><div class="feature-title">Simulador de dívidas</div><div class="feature-desc">Descubra o valor real que você vai pagar com juros antes de assumir qualquer dívida.</div></div>
-    <div class="feature-card"><div class="feature-icon"><img src="icone-investimento.png" alt="Investimentos"></div><div class="feature-title">Comparador de investimentos</div><div class="feature-desc">Poupança, Tesouro Selic e CDB 110% lado a lado. Simule com seu valor e prazo.</div></div>
-    <div class="feature-card"><div class="feature-icon"><img src="icone-cerebro.png" alt="Necessidade vs Desejo"></div><div class="feature-title">Necessidade vs Desejo</div><div class="feature-desc">Ao registrar um gasto o Monvy te pergunta: isso é necessidade ou impulso? E pede confirmação se for desejo.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-casa-propria.png" alt="Dashboard"></div><div class="feature-title">Dashboard completo</div><div class="feature-desc">Saldo em destaque, entradas, saídas e últimas movimentações numa tela só. Visão geral imediata.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-grafico-novo.png" alt="Gastos"></div><div class="feature-title">Gastos por categoria</div><div class="feature-desc">Organize seus gastos em Casa, Alimentação, Transporte, Lazer, Saúde e Outros. Com gráfico de fluxo.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-meta-novo.png" alt="Metas"></div><div class="feature-title">Metas de economia</div><div class="feature-desc">Crie metas com valor-alvo e acompanhe com barra de progresso. Adicione valores quando quiser.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-cartao-novo.png" alt="Dívidas"></div><div class="feature-title">Simulador de dívidas</div><div class="feature-desc">Descubra o valor real que você vai pagar com juros antes de assumir qualquer dívida.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-investimento-novo.png" alt="Investimentos"></div><div class="feature-title">Comparador de investimentos</div><div class="feature-desc">Poupança, Tesouro Selic e CDB 110% lado a lado. Simule com seu valor e prazo.</div></div>
+    <div class="feature-card"><div class="feature-icon"><img src="icone-cerebro-novo.png" alt="Necessidade vs Desejo"></div><div class="feature-title">Necessidade vs Desejo</div><div class="feature-desc">Ao registrar um gasto o Monvy te pergunta: isso é necessidade ou impulso? E pede confirmação se for desejo.</div></div>
   </div>
 </section>
 
@@ -612,8 +612,30 @@
       </div>
       <div class="auth-field">
         <label>Senha</label>
-        <input type="password" id="auth-password" placeholder="Mínimo 6 caracteres">
+        <div style="position:relative">
+          <input type="password" id="auth-password" placeholder="Mínimo 6 caracteres" style="padding-right:44px;width:100%;box-sizing:border-box">
+          <button type="button" onclick="toggleSenha()" id="btn-toggle-senha" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray);padding:0;display:flex;align-items:center" title="Mostrar senha">
+            <svg id="icon-eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg id="icon-eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
       </div>
+      <script>
+      function toggleSenha() {
+        const input = document.getElementById('auth-password');
+        const eyeShow = document.getElementById('icon-eye-show');
+        const eyeHide = document.getElementById('icon-eye-hide');
+        if (input.type === 'password') {
+          input.type = 'text';
+          eyeShow.style.display = 'none';
+          eyeHide.style.display = 'block';
+        } else {
+          input.type = 'password';
+          eyeShow.style.display = 'block';
+          eyeHide.style.display = 'none';
+        }
+      }
+      </script>
 
       <div class="auth-error" id="auth-error"></div>
       <button class="auth-submit" id="auth-submit" onclick="handleAuth()">Criar minha conta →</button>
